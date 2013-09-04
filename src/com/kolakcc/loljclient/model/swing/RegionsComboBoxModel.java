@@ -43,6 +43,7 @@ public class RegionsComboBoxModel implements ComboBoxModel<String> {
 					break; 
 				}
 			}
+			if (selectedRegion == null) { selectedRegion = regionList.get(0); }
 		}
 		return this.selectedRegion.getName();
 	}
