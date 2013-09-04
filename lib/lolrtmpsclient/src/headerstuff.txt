@@ -1,0 +1,33 @@
+Preamble:
+03 (channel)
+00 00 00 (Time delta)
+XX XX XX (datasize, does not include chunk markers)
+XX (type, 14 for connect, 11 for rest)
+00 00 00 00 (source id)
+
+Connect:
+02 (string) 00 07 (length) connect ([Name.]Method)
+00 (number) 8 bytes (InvokeId -> double)
+11 (AMF3 object)
+09 (array) 01 (associative)
+[foreach ConnectionParams] XX (keylen) XX (key) XX (valtype) ... (val encode)
+01 (end associative)
+[foreach ServiceCall.Args] AMF0 encode, AFM3 for object (CommandMessage)
+e.g. 01 00 (false) 02 00 03 6E 69 6C (nil) 02 00 00 ("") 11 0A (command message)
+
+Result:
+00 (invoke version)
+02 (string) 00 07 (length) _result
+00 (number) 8 bytes (invokeID)
+05 (null)
+11 (AMF3 object)
+... (normal decoding)
+
+Send Invoke:
+00 (invoke version)
+05 (type? null)
+00 (number) 8bytes (invoke ID = 2?)
+05 (null)
+11 (AMF3 object)
+... (normal encoding)
+
