@@ -1,3 +1,0 @@
-user=KolakCC
-version=1.73.12_12_18_17_01
-region=Europe West

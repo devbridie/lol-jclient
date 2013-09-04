@@ -52,8 +52,8 @@ public class LoLRTMPSClient extends RTMPSClient {
     /** Connection information */
     private String authToken;
     private String sessionToken;
-    private int accountID;    
-    
+    private int accountID;
+
     /**
      * Hidden constructor
      */
@@ -71,7 +71,7 @@ public class LoLRTMPSClient extends RTMPSClient {
      * @param user The user to login as
      * @param pass The user's password
      */
-    public LoLRTMPSClient(com.kolakcc.loljclient.model.ServerInfo serverInfo, String clientVersion, String user, String pass) {
+    public LoLRTMPSClient(ServerInfo serverInfo, String clientVersion, String user, String pass) {
         this.serverInfo = serverInfo;
         this.region = serverInfo.region;
         this.server = serverInfo.server;
@@ -432,7 +432,7 @@ public class LoLRTMPSClient extends RTMPSClient {
             payload = garenaToken;
         else
             payload = "user=" + user + ",password=" + pass;
-        String query = "payload=" + URLEncoder.encode(payload, "UTF-8");
+        String query = "payload=" + URLEncoder.encode(payload, "ISO-8859-1");
 
         URL url = new URL(loginQueue + "login-queue/rest/queue/authenticate");
 
