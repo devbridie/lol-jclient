@@ -2,7 +2,7 @@ bin/*
 *.png
 *.swf
 *.jpg
-loljclient/data/*
+data/*
 /bin
 *.class
 
