@@ -8,6 +8,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.pushingpixels.substance.api.skin.GraphiteSkin;
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
+
 import com.gvaneyck.rtmp.LoLRTMPSClient;
 import com.kolakcc.loljclient.controller.AboutController;
 import com.kolakcc.loljclient.controller.ChampionDetailedController;
@@ -51,9 +54,12 @@ public class StartupClass {
 	public static void main(String[] args) {
 		String lafConfiguration = Configuration.getDefaultLAF();
 		if (lafConfiguration.equals("")) Configuration.set("laf", UIManager.getSystemLookAndFeelClassName());
+		
 		try {
 			UIManager.setLookAndFeel(lafConfiguration);
+			UIManager.setLookAndFeel(lafConfiguration); //Substance requires the L&F to be set twice, for whatever reason.
 		} catch (Exception e) {
+			System.err.printf("L&F by the name of %s could not found\r\n", lafConfiguration);
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e1) {
