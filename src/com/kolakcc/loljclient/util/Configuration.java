@@ -23,7 +23,7 @@ public class Configuration {
 	}
 	public static String getDefaultLAF() {
 		if (config == null) initializeProperties();
-		return config.getProperty("region", "");
+		return config.getProperty("laf", "");
 	}
 	public static String getDefaultRegion() {
 		if (config == null) initializeProperties();
