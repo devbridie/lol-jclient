@@ -10,7 +10,8 @@ import com.kolakcc.loljclient.model.ModelFromTO;
 import com.kolakcc.loljclient.view.ui.VerticalJScrollPane;
 
 public class DebugView extends KolaView {
-	JTextArea area;
+	JTextArea outArea;
+	JTextArea errArea;
 	
 	static JTextArea objects;
 	
@@ -23,10 +24,15 @@ public class DebugView extends KolaView {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
-		area = new JTextArea();
-		area.setEditable(false);
-		area.setLineWrap(true);
-		tabbedPane.addTab("Console", new VerticalJScrollPane(area));
+		outArea = new JTextArea();
+		outArea.setEditable(false);
+		outArea.setLineWrap(true);
+		tabbedPane.addTab("System.out", new VerticalJScrollPane(outArea));
+		
+		errArea = new JTextArea();
+		errArea.setEditable(false);
+		errArea.setLineWrap(true);
+		tabbedPane.addTab("System.err", new VerticalJScrollPane(errArea));
 		
 		objects = new JTextArea();
 		objects.setEditable(false);
@@ -37,8 +43,11 @@ public class DebugView extends KolaView {
 		this.setVisible(true);
 	}
 	
-	public void addLine(String line) {
-		area.append(line);
+	public void addOutLine(String line) {
+		outArea.append(line);
+	}
+	public void addErrLine(String line) {
+		errArea.append(line);
 	}
 	
 	public static void addObject(ModelFromTO model) {

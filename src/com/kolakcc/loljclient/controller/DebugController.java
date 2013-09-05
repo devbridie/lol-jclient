@@ -29,7 +29,23 @@ public class DebugController extends KolaController {
 		            return null;
 		        }
 		        protected void process(List<String> chunks) {
-		            for (String line : chunks) view.addLine(line);
+		            for (String line : chunks) view.addOutLine(line);
+		        }
+		    }.execute();
+		    
+
+			final PipedInputStream errPipe = new PipedInputStream();
+			System.setErr(new PrintStream(new PipedOutputStream(errPipe), true));
+			
+			new SwingWorker<Void, String>() {
+		        protected Void doInBackground() throws Exception {
+		            Scanner s = new Scanner(errPipe);
+		            while (s.hasNextLine()) publish(s.nextLine() + "\n");
+		            s.close();
+		            return null;
+		        }
+		        protected void process(List<String> chunks) {
+		            for (String line : chunks) view.addErrLine(line);
 		        }
 		    }.execute();
 		} catch (Exception e) {
