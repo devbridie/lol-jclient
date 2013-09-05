@@ -82,7 +82,7 @@ public class ProfileController extends KolaController implements MouseListener, 
 						ProfileController.this.gamesListModel.saveGames(LoggedInSummoner.summonerData.getSummonerName());
 					}
 					int fromCache = ProfileController.this.gamesListModel.getSize() - fromServer;
-					ProfileController.this.view.setAmountText(String.format("%d from server, %d from cache, total %d", fromServer, fromCache, fromServer+fromCache));
+					ProfileController.this.view.setAmountObject(new Object[] { new Integer(fromServer), new Integer(fromCache), new Integer(fromServer + fromCache) });
 					ProfileController.this.view.setRecentGamesModel(ProfileController.this.gamesListModel);
 					ProfileController.this.mouseClicked(null);
 				} catch (Exception e) {
