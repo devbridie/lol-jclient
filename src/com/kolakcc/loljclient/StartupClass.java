@@ -49,14 +49,15 @@ public class StartupClass {
 	}
 
 	public static void main(String[] args) {
+		String lafConfiguration = Configuration.getDefaultLAF();
+		if (lafConfiguration.equals("")) Configuration.set("laf", UIManager.getSystemLookAndFeelClassName());
 		try {
-			UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel");
-			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(lafConfiguration);
 		} catch (Exception e) {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e1) {
-				System.err.println("No System Look and feel found, continuing with default...");
+				System.err.println("No System Look and Feel found, continuing with default...");
 			} 
 		}
 		SwingUtilities.invokeLater(new Runnable() {
