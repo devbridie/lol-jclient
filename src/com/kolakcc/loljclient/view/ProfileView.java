@@ -8,7 +8,6 @@ import java.awt.event.MouseListener;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -31,6 +30,7 @@ import com.kolakcc.loljclient.util.LocaleMessages;
 import com.kolakcc.loljclient.view.ui.ChampionBox;
 import com.kolakcc.loljclient.view.ui.DivisionPanel;
 import com.kolakcc.loljclient.view.ui.ItemImageLabel;
+import com.kolakcc.loljclient.view.ui.LocalizedJButton;
 import com.kolakcc.loljclient.view.ui.LocalizedJLabel;
 import com.kolakcc.loljclient.view.ui.RunePagePanel;
 import com.kolakcc.loljclient.view.ui.VerticalJScrollPane;
@@ -38,7 +38,7 @@ import com.kolakcc.loljclient.view.ui.renderer.RecentGameListItemRenderer;
 
 public class ProfileView extends KolaView {
 	JTextField searchField;
-	JButton searchButton;
+	LocalizedJButton searchButton;
 	
 	JList<RecentGame> recentMatchesList;
 
@@ -53,7 +53,8 @@ public class ProfileView extends KolaView {
 	JTabbedPane runePagesTabPane, leaguesTabPane;
 	
 	ChampionBox currentGameChampion;
-	static LocaleMessages generalMessages = new LocaleMessages("generalBundle"), 
+	static LocaleMessages generalMessages = new LocaleMessages("generalBundle"),
+						  profileViewMessages = new LocaleMessages("profileViewBundle"),
 						  statsMessages = new LocaleMessages("statsBundle");
 	
 	public ProfileView() {
@@ -70,7 +71,7 @@ public class ProfileView extends KolaView {
 		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		searchField = new JTextField(15);
 		searchPanel.add(searchField);
-		searchButton = new JButton("Search");
+		searchButton = new LocalizedJButton(profileViewMessages, "search");
 		searchPanel.add(searchButton);
 		topPanel.add(searchPanel,BorderLayout.EAST);
 		
@@ -118,10 +119,10 @@ public class ProfileView extends KolaView {
 		recentMatchesPanel.add(gameInfo, BorderLayout.CENTER);
 
 		recentGamesTabPanel.add(recentMatchesPanel);
-		tabPane.addTab("Recent Games", recentGamesTabPanel);
+		tabPane.addTab(profileViewMessages.getString("recent games"), recentGamesTabPanel);
 
 		leaguesTabPane = new JTabbedPane();
-		tabPane.addTab("Leagues", leaguesTabPane);
+		tabPane.addTab(profileViewMessages.getString("leagues"), leaguesTabPane);
 		
 		JPanel runesPanel = new JPanel(new BorderLayout());
 		runesTable = new JTable();
@@ -129,7 +130,7 @@ public class ProfileView extends KolaView {
 		
 		runePagesTabPane = new JTabbedPane();
 		runesPanel.add(runePagesTabPane,BorderLayout.CENTER);
-		tabPane.add("Runes",runesPanel);
+		tabPane.add(profileViewMessages.getString("runes"),runesPanel);
 		
 		add(tabPane, BorderLayout.CENTER);
 		setSize(600, 500);
@@ -185,7 +186,7 @@ public class ProfileView extends KolaView {
 		for (Map.Entry<String, Integer> entry : game.getStatistics().entrySet()) {
 			String key = entry.getKey();
 			if (key.startsWith("ITEM") || key.startsWith("WIN") || key.startsWith("LOSE")) continue;
-			statsPanel.add(new JLabel(statsMessages.getString(entry.getKey())));
+			statsPanel.add(new LocalizedJLabel(statsMessages, entry.getKey()));
 			statsPanel.add(new JLabel(entry.getValue().toString()));
 		}
 		try { currentGameChampion.setChampion(Champion.getChampionFromID(game.getChampionID())); }
@@ -205,7 +206,7 @@ public class ProfileView extends KolaView {
 		recentMatchesList.addMouseListener(l);
 	}
 	
-	public void setAmountText(String s) {
-		gamesNumber.setText(s);
+	public void setAmountObject(Object[] messageArguments) {
+		gamesNumber.setText(profileViewMessages.getComplexString("games_amount", messageArguments));
 	}
 }
