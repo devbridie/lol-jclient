@@ -1,10 +1,12 @@
-bin/*
-*.png
 *.swf
-*.jpg
 data/*
-/bin
 *.class
+img/spells
+img/masteries
+img/items
+img/buddyIcons
+
+# Eclipse stuff
 
 *.pydevproject
 .project
@@ -32,3 +34,5 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+config
