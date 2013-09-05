@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,6 +15,8 @@ import org.jivesoftware.smack.RosterEntry;
 
 import com.kolakcc.loljclient.model.Status;
 import com.kolakcc.loljclient.model.swing.StatusComboBoxModel;
+import com.kolakcc.loljclient.util.LocaleMessages;
+import com.kolakcc.loljclient.view.ui.LocalizedJLabel;
 import com.kolakcc.loljclient.view.ui.renderer.FriendListItemRenderer;
 import com.kolakcc.loljclient.view.ui.renderer.StatusComboBoxRenderer;
 
@@ -24,10 +25,12 @@ public class FriendsListView extends KolaView {
 	public JList<RosterEntry> offlineList;
 	public JComboBox<Status> presenceComboBox;
 	public JTextField presenceStatusField;
+	
+	static LocaleMessages friendsListViewMessages = new LocaleMessages("friendsListViewBundle");
 
 	public FriendsListView() {
 		super();
-		this.setTitle("Friends");
+		this.setTitle(friendsListViewMessages.getString("friends"));
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setSize(400, 800);
 		this.setLayout(new BorderLayout());
@@ -35,13 +38,13 @@ public class FriendsListView extends KolaView {
 		splitter.setResizeWeight(0.5);
 
 		JPanel topPanel = new JPanel(new BorderLayout());
-		topPanel.add(new JLabel("Online:"), BorderLayout.NORTH);
+		topPanel.add(new LocalizedJLabel(friendsListViewMessages, "online"), BorderLayout.NORTH);
 		this.onlineList = new JList<RosterEntry>();
 		this.onlineList.setCellRenderer(new FriendListItemRenderer());
 		topPanel.add(new JScrollPane(this.onlineList), BorderLayout.CENTER);
 
 		JPanel bottomPanel = new JPanel(new BorderLayout());
-		bottomPanel.add(new JLabel("Offline:"), BorderLayout.NORTH);
+		bottomPanel.add(new LocalizedJLabel(friendsListViewMessages, "offline"), BorderLayout.NORTH);
 		this.offlineList = new JList<RosterEntry>();
 		this.offlineList.setCellRenderer(new FriendListItemRenderer());
 		bottomPanel.add(new JScrollPane(this.offlineList), BorderLayout.CENTER);
