@@ -27,9 +27,11 @@ import com.kolakcc.loljclient.model.RunePage;
 import com.kolakcc.loljclient.model.swing.RecentGamesListModel;
 import com.kolakcc.loljclient.model.swing.RunesInventoryTableModel;
 import com.kolakcc.loljclient.util.FontUtils;
+import com.kolakcc.loljclient.util.LocaleMessages;
 import com.kolakcc.loljclient.view.ui.ChampionBox;
 import com.kolakcc.loljclient.view.ui.DivisionPanel;
 import com.kolakcc.loljclient.view.ui.ItemImageLabel;
+import com.kolakcc.loljclient.view.ui.LocalizedJLabel;
 import com.kolakcc.loljclient.view.ui.RunePagePanel;
 import com.kolakcc.loljclient.view.ui.VerticalJScrollPane;
 import com.kolakcc.loljclient.view.ui.renderer.RecentGameListItemRenderer;
@@ -40,7 +42,7 @@ public class ProfileView extends KolaView {
 	
 	JList<RecentGame> recentMatchesList;
 
-	JLabel summonerNameLabel, championNameLabel, killsLabel, deathsLabel, assistsLabel, summonerSpell1Label, summonerSpell2Label, goldEarnedLabel,
+	LocalizedJLabel summonerNameLabel, championNameLabel, killsLabel, deathsLabel, assistsLabel, summonerSpell1Label, summonerSpell2Label, goldEarnedLabel,
 		   gamesNumber, currentGameChampionName;
 
 	ItemImageLabel item1Label, item2Label, item3Label, item4Label, item5Label, item6Label;
@@ -51,6 +53,8 @@ public class ProfileView extends KolaView {
 	JTabbedPane runePagesTabPane, leaguesTabPane;
 	
 	ChampionBox currentGameChampion;
+	static LocaleMessages generalMessages = new LocaleMessages("generalBundle"), 
+						  statsMessages = new LocaleMessages("statsBundle");
 	
 	public ProfileView() {
 		super();
@@ -59,7 +63,7 @@ public class ProfileView extends KolaView {
 		setTitle("Profile");
 		
 		JPanel topPanel = new JPanel(new BorderLayout());
-		summonerNameLabel = new JLabel("Loading...");
+		summonerNameLabel = new LocalizedJLabel();
 		summonerNameLabel.setFont(FontUtils.emSize(summonerNameLabel.getFont(), 2.0));
 		topPanel.add(summonerNameLabel,BorderLayout.WEST);
 		
@@ -82,7 +86,7 @@ public class ProfileView extends KolaView {
 		DefaultListModel<RecentGame> temp = new DefaultListModel<RecentGame>();
 		recentMatchesList.setModel(temp);
 		
-		gamesNumber = new JLabel("Loading...");
+		gamesNumber = new LocalizedJLabel();
 		westPanel.add(gamesNumber, BorderLayout.NORTH);
 		westPanel.add(new JScrollPane(recentMatchesList), BorderLayout.CENTER);
 		recentMatchesPanel.add(westPanel, BorderLayout.WEST);
@@ -93,23 +97,17 @@ public class ProfileView extends KolaView {
 		JPanel championAndName = new JPanel(new FlowLayout());
 		currentGameChampion = new ChampionBox();
 		championAndName.add(currentGameChampion);
-		currentGameChampionName = new JLabel("");
+		currentGameChampionName = new LocalizedJLabel();
 		championAndName.add(currentGameChampionName);
 		topGamePanel.add(championAndName, BorderLayout.NORTH);
 		
 		itemsPanel = new JPanel(new FlowLayout());
-		item1Label = new ItemImageLabel();
-		itemsPanel.add(item1Label);
-		item2Label = new ItemImageLabel();
-		itemsPanel.add(item2Label);
-		item3Label = new ItemImageLabel();
-		itemsPanel.add(item3Label);
-		item4Label = new ItemImageLabel();
-		itemsPanel.add(item4Label);
-		item5Label = new ItemImageLabel();
-		itemsPanel.add(item5Label);
-		item6Label = new ItemImageLabel();
-		itemsPanel.add(item6Label);
+		item1Label = new ItemImageLabel(); itemsPanel.add(item1Label);
+		item2Label = new ItemImageLabel(); itemsPanel.add(item2Label);
+		item3Label = new ItemImageLabel(); itemsPanel.add(item3Label);
+		item4Label = new ItemImageLabel(); itemsPanel.add(item4Label);
+		item5Label = new ItemImageLabel(); itemsPanel.add(item5Label);
+		item6Label = new ItemImageLabel(); itemsPanel.add(item6Label);
 		topGamePanel.add(itemsPanel,BorderLayout.CENTER);
 		
 		gameInfo.add(topGamePanel,BorderLayout.NORTH);
@@ -187,7 +185,7 @@ public class ProfileView extends KolaView {
 		for (Map.Entry<String, Integer> entry : game.getStatistics().entrySet()) {
 			String key = entry.getKey();
 			if (key.startsWith("ITEM") || key.startsWith("WIN") || key.startsWith("LOSE")) continue;
-			statsPanel.add(new JLabel(entry.getKey()));
+			statsPanel.add(new JLabel(statsMessages.getString(entry.getKey())));
 			statsPanel.add(new JLabel(entry.getValue().toString()));
 		}
 		try { currentGameChampion.setChampion(Champion.getChampionFromID(game.getChampionID())); }
