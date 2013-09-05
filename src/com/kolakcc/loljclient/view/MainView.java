@@ -44,7 +44,7 @@ public class MainView extends KolaView {
 		this.storeButton = new LocalizedJButton(mainViewMessages, "store");
 		topPanel.add(this.storeButton);
 		
-		this.launch = new LocalizedJButton("launch lol");
+		this.launch = new LocalizedJButton(mainViewMessages,"launch lol");
 		topPanel.add(this.launch);
 
 		this.add(topPanel, BorderLayout.NORTH);
