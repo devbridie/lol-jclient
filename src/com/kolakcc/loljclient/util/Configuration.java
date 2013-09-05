@@ -21,6 +21,10 @@ public class Configuration {
 			e.printStackTrace();
 		}
 	}
+	public static String getDefaultLAF() {
+		if (config == null) initializeProperties();
+		return config.getProperty("region", "");
+	}
 	public static String getDefaultRegion() {
 		if (config == null) initializeProperties();
 		return config.getProperty("region", "");
@@ -57,15 +61,14 @@ public class Configuration {
 	}
 	
 	public static void setStatus(String status) {
-		if (config == null) initializeProperties();
-		config.put("status", status);
-		Configuration.flushConfig();
+		set("status", status);
 	}
 	
 	public static void setLeagueDirectory(File dir) {
-		if (config == null) initializeProperties();
-		config.put("leaguedir", dir.getAbsolutePath());
-		Configuration.flushConfig();
+		set("leaguedir", dir.getAbsolutePath());
+	}
+	public static void setDefaultLAF(String LAF) {
+		set("laf",LAF);
 	}
 	
 	public static void flushConfig() {
