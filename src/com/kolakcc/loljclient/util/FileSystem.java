@@ -45,11 +45,11 @@ public class FileSystem {
 				ret.getParentFile().mkdirs();
 				if (path.endsWith("/")) {
 					ret.mkdir();
-					System.out.printf("Directory %s created\n", ret.getPath());
+					System.out.printf("Directory %s created %n", ret.getPath());
 				} else {
 					try {
 						if (ret.createNewFile()) {
-							System.out.printf("File %s created\n", ret.getPath());
+							System.out.printf("File %s created %n", ret.getPath());
 						}
 					} catch (IOException e) {
 						e.printStackTrace();

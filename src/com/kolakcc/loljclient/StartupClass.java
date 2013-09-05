@@ -56,7 +56,7 @@ public class StartupClass {
 			UIManager.setLookAndFeel(lafConfiguration);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.printf("L&F by the name of %s could not found\r\n", lafConfiguration);
+			System.err.printf("L&F by the name of %s could not found %n", lafConfiguration);
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e1) {
