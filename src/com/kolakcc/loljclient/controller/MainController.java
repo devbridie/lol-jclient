@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.SwingWorker;
 
 import com.gvaneyck.rtmp.encoding.TypedObject;
@@ -17,11 +15,12 @@ import com.kolakcc.loljclient.model.LoggedInSummoner;
 import com.kolakcc.loljclient.model.SummonerSpell;
 import com.kolakcc.loljclient.util.GameClient;
 import com.kolakcc.loljclient.view.MainView;
+import com.kolakcc.loljclient.view.ui.LocalizedJButton;
 
 public class MainController extends KolaController implements ActionListener {
-	protected MainView view;
-	protected SwingWorker<TypedObject, String> requestWorker;
-	protected SwingWorker<Object, String> assetLoaderWorker;
+	MainView view;
+	SwingWorker<TypedObject, String> requestWorker;
+	SwingWorker<Object, String> assetLoaderWorker;
 
 	public MainController() {
 		this.initializeWorkers();
@@ -30,8 +29,6 @@ public class MainController extends KolaController implements ActionListener {
 		this.view.customGameButton.addActionListener(this);
 		this.view.profileButton.addActionListener(this);
 		this.view.championsButton.addActionListener(this);
-		this.view.settingsItem.addActionListener(this);
-		this.view.aboutItem.addActionListener(this);
 		this.view.storeButton.addActionListener(this);
 		this.view.launch.addActionListener(this);
 		this.assetLoaderWorker.execute();
@@ -39,26 +36,20 @@ public class MainController extends KolaController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String buttonText;
-		if (e.getSource() instanceof JButton) buttonText = ((JButton) e.getSource()).getText();
-		else buttonText = ((JMenuItem) e.getSource()).getText();
-		switch (buttonText) {
-			case "Champions":
+		switch (((LocalizedJButton) e.getSource()).getKey()) {
+			case "champions":
 				StartupClass.openChampions();
 				break;
-			case "Profile":
+			case "profile":
 				StartupClass.openProfile();
 				break;
-			case "Custom Games":
+			case "custom games":
 				StartupClass.openCustomGames();
 				break;
-			case "About":
-				StartupClass.openAbout();
-				break;
-			case "Store":
+			case "store":
 				StartupClass.openStore();
 				break;
-			case "Launch LoL":
+			case "launch lol":
 				GameClient.start();
 				break;
 		}
@@ -88,6 +79,7 @@ public class MainController extends KolaController implements ActionListener {
 		};
 		this.assetLoaderWorker = new SwingWorker<Object, String>() {
 			protected Object doInBackground() throws Exception {
+				//TODO: localize this
 				this.publish("Loading champions...");
 				Champion.initializeChampions();
 				
