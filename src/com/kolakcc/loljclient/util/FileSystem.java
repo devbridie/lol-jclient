@@ -12,7 +12,7 @@ public class FileSystem {
 		if (split[0].equals("lol")) {
 			prefix = Configuration.getLeagueDirectory();
 		} else if (split[0].equals("app")) {
-			prefix = "loljclient/";
+			prefix = "";
 		}
 		if (prefix == null) {
 			throw new RuntimeException(String.format("Prefix not recognized: %s for input %s",split[0],path));
