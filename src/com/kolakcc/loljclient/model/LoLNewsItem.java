@@ -3,6 +3,7 @@ package com.kolakcc.loljclient.model;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -11,7 +12,7 @@ import org.w3c.dom.NodeList;
 public class LoLNewsItem {
 	public String title;
 	public URL link;
-	public Date pubDate;
+	public Date pubDate; 
 	public String description;
 	public String content;
 	public String creator;
@@ -22,7 +23,7 @@ public class LoLNewsItem {
 		this.title = this.getTagValue("title", item);
 		try {
 			this.link = new URL(this.getTagValue("link", item));
-			this.pubDate = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss")
+			this.pubDate = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss", Locale.ENGLISH)
 					.parse(this.getTagValue("pubDate", item));
 			this.link = new URL(this.getTagValue("guid", item));
 		} catch (Exception e) {
