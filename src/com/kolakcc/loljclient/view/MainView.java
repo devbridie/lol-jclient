@@ -2,72 +2,52 @@ package com.kolakcc.loljclient.view;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class MainView extends KolaView {
-	public JLabel IPBalance;
-	public JLabel RPBalance;
+import com.kolakcc.loljclient.util.LocaleMessages;
+import com.kolakcc.loljclient.view.ui.LocalizedJButton;
+import com.kolakcc.loljclient.view.ui.LocalizedJLabel;
 
-	public JButton customGameButton;
-	public JButton profileButton;
-	public JButton championsButton;
-	public JButton storeButton, launch;
+public class MainView extends KolaView {
+	public LocalizedJLabel IPBalance, RPBalance;
+
+	public LocalizedJButton customGameButton, profileButton, championsButton, storeButton, launch;
 	
-	public JMenuItem settingsItem;
-	public JMenuItem aboutItem;
+	static LocaleMessages mainViewMessages = new LocaleMessages("mainViewBundle");
 
 	public MainView() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.setTitle("loljclient");
+		this.setTitle("lol-jclient");
 		this.setSize(800, 600);
 
 		JPanel topPanel = new JPanel();
 
-		topPanel.add(new JLabel("IP:"));
-		this.IPBalance = new JLabel("Loading...");
+		topPanel.add(new LocalizedJLabel(mainViewMessages, "ip"));
+		this.IPBalance = new LocalizedJLabel();
 		topPanel.add(this.IPBalance);
 
-		topPanel.add(new JLabel("RP:"));
-		this.RPBalance = new JLabel("Loading...");
+		topPanel.add(new LocalizedJLabel(mainViewMessages, "rp"));
+		this.RPBalance = new LocalizedJLabel();
 		topPanel.add(this.RPBalance);
 
-		this.customGameButton = new JButton("Custom Games");
+		this.customGameButton = new LocalizedJButton(mainViewMessages, "custom games");
 		topPanel.add(this.customGameButton);
 
-		this.profileButton = new JButton("Profile");
+		this.profileButton = new LocalizedJButton(mainViewMessages, "profile");
 		topPanel.add(this.profileButton);
 
-		this.championsButton = new JButton("Champions");
+		this.championsButton = new LocalizedJButton(mainViewMessages, "champions");
 		topPanel.add(this.championsButton);
 		
-		this.storeButton = new JButton("Store");
+		this.storeButton = new LocalizedJButton(mainViewMessages, "store");
 		topPanel.add(this.storeButton);
 		
-		this.launch = new JButton("Launch LoL");
+		this.launch = new LocalizedJButton("launch lol");
 		topPanel.add(this.launch);
 
 		this.add(topPanel, BorderLayout.NORTH);
-
-		JMenuBar menuBar = new JMenuBar();
-
-		JMenu toolMenu = new JMenu("Tools");
-		this.settingsItem = new JMenuItem("Settings");
-		toolMenu.add(this.settingsItem);
-
-		JMenu helpMenu = new JMenu("Help");
-		this.aboutItem = new JMenuItem("About");
-		helpMenu.add(this.aboutItem);
-
-		menuBar.add(toolMenu);
-		menuBar.add(helpMenu);
-		//this.setJMenuBar(menuBar);
 
 		this.setVisible(true);
 	}
