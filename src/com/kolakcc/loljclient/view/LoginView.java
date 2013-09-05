@@ -8,11 +8,8 @@ import java.awt.FocusTraversalPolicy;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -20,21 +17,26 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.kolakcc.loljclient.model.swing.LoLNewsTableModel;
+import com.kolakcc.loljclient.util.LocaleMessages;
+import com.kolakcc.loljclient.view.ui.LocalizedJButton;
+import com.kolakcc.loljclient.view.ui.LocalizedJCheckBox;
+import com.kolakcc.loljclient.view.ui.LocalizedJLabel;
 
 public class LoginView extends KolaView {
 	public JTextField usernameField;
 	public JPasswordField passwordField;
-	public JButton loginButton;
+	public LocalizedJButton loginButton;
 	public JComboBox<String> regionField;
 	public JTable newsList;
-	public JLabel statusLabel;
 
-	public JCheckBox rememberUsername, rememberPassword;
+	public LocalizedJCheckBox rememberUsername, rememberPassword;
 	LoLNewsTableModel newsModel;
+	
+	static LocaleMessages loginViewMessages = new LocaleMessages("loginViewBundle");
 
 	public LoginView() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("loljclient");
+		this.setTitle("lol-jclient");
 		this.setSize(400,600);
 		
 		this.newsList = new JTable();
@@ -45,15 +47,15 @@ public class LoginView extends KolaView {
 		JPanel formPanel = new JPanel(new GridLayout(6, 1));
 		
 		JPanel regionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		regionPanel.add(new JLabel("Region:"));
+		regionPanel.add(new LocalizedJLabel(loginViewMessages, "region"));
 		formPanel.add(regionPanel);
 		
 		this.regionField = new JComboBox<String>();
 		formPanel.add(regionField);
 
 		JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		usernamePanel.add(new JLabel("Username:"));
-		rememberUsername = new JCheckBox("Remember");
+		usernamePanel.add(new LocalizedJLabel(loginViewMessages, "username"));
+		rememberUsername = new LocalizedJCheckBox(loginViewMessages, "remember");
 		usernamePanel.add(rememberUsername);
 		formPanel.add(usernamePanel);
 		
@@ -61,8 +63,8 @@ public class LoginView extends KolaView {
 		formPanel.add(usernameField);
 
 		JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		passwordPanel.add(new JLabel("Password:"));
-		rememberPassword = new JCheckBox("Remember");
+		passwordPanel.add(new LocalizedJLabel(loginViewMessages, "password"));
+		rememberPassword = new LocalizedJCheckBox(loginViewMessages, "remember");
 		passwordPanel.add(rememberPassword);
 		formPanel.add(passwordPanel);
 		
@@ -71,7 +73,7 @@ public class LoginView extends KolaView {
 		
 		bottomPanel.add(formPanel, BorderLayout.NORTH);
 
-		this.loginButton = new JButton("Login");
+		this.loginButton = new LocalizedJButton(loginViewMessages, "login");
 		bottomPanel.add(this.loginButton, BorderLayout.SOUTH);
 		
 		this.add(bottomPanel,BorderLayout.SOUTH);
