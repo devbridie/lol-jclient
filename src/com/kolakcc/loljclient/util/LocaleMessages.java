@@ -1,5 +1,6 @@
 package com.kolakcc.loljclient.util;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -21,5 +22,9 @@ public class LocaleMessages {
 			System.err.printf("Key %s not found in bundle %s with locale %s %n", key, bundleName, internalBundle.getLocale());
 			return key;
 		}
+	}
+	
+	public String getComplexString(String key, Object[] messageArguments) {
+		return new MessageFormat(getString(key)).format(messageArguments);
 	}
 }
