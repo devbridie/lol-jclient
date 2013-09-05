@@ -4,6 +4,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LocaleMessages {
+	public static LocaleMessages generalMessages = new LocaleMessages("generalBundle");
+	
 	String bundleName;
 	ResourceBundle internalBundle;
 	
@@ -14,7 +16,7 @@ public class LocaleMessages {
 	
 	public String getString(String key) {
 		try {
-			return internalBundle.getString(key);
+			return internalBundle.getString(key.replaceAll(" ", "_"));
 		} catch (Exception e) {
 			System.err.printf("Key %s not found in bundle %s with locale %s %n", key, bundleName, internalBundle.getLocale());
 			return key;
