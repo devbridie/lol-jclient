@@ -86,7 +86,7 @@ public class CustomGameDetailed extends ModelFromTO { //TODO: group this and cus
 		futureData = getProbablyNull("futureData");
 		expiryTime = getDouble("expiryTime");
 		//TODO: fix seconds
-		System.out.format("Time left: %d minutes and %f seconds\n", Math.round(expiryTime/60/1000), (expiryTime % (60*1000))/1000);
+		System.out.printf("Time left: %d minutes and %f seconds %n", Math.round(expiryTime/60/1000), (expiryTime % (60*1000))/1000);
 		
 		mapID = getInt("mapId");
 		pickTurn = getInt("pickTurn");
