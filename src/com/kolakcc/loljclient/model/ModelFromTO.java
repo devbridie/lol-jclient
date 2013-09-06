@@ -14,7 +14,7 @@ public class ModelFromTO {
 	
 	public ModelFromTO(TypedObject ito) {
 		if (ito == null) {
-			System.out.println("This internal typed object is null! " + this.getClass().getName());
+			System.out.printf("This internal typed object is null! %s %n",this.getClass().getName());
 		}
 		internalTypedObject = ito;
 		usedKeys = new ArrayList<String>();
@@ -24,7 +24,7 @@ public class ModelFromTO {
 		if (internalTypedObject != null) {
 			for (String key : internalTypedObject.keySet()) {
 				if (!usedKeys.contains(key)) {
-					System.out.println(String.format("%s: Field %s = %s of type %s is not mapped!", getClass().getName(), key, internalTypedObject.get(key), internalTypedObject.type));
+					System.out.printf("%s: Field %s = %s of type %s is not mapped! %n", getClass().getName(), key, internalTypedObject.get(key), internalTypedObject.type);
 				}
 			}
 		}
@@ -34,8 +34,7 @@ public class ModelFromTO {
 	protected void checkAndAddKey(String key) {
 		if (internalTypedObject != null)
 		if (!containsKey(key)) { 
-			System.out.println(String.format("%s: Field %s of type %s does not exist!", getClass().getName(), key, internalTypedObject.type));
-			System.out.println(internalTypedObject);
+			System.out.printf("%s: Field %s of type %s does not exist! %n %s", getClass().getName(), key, internalTypedObject.type, internalTypedObject);
 		}
 		usedKeys.add(key);
 		
@@ -90,8 +89,7 @@ public class ModelFromTO {
 		checkAndAddKey(key);
 		Object ret = internalTypedObject.get(key);
 		if (ret != null) {
-			System.out.println("HEY! There's some data here that you thought was null.");
-			System.out.println(String.format("Field %s was expected to be null, is actually %s (%s)", key, ret, internalTypedObject.type));
+			System.out.printf("Field %s was expected to be null, is actually %s (%s) %n", key, ret, internalTypedObject.type);
 		}
 		return ret;
 	}
