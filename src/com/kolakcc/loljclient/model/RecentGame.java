@@ -1,19 +1,11 @@
 package com.kolakcc.loljclient.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 import com.gvaneyck.rtmp.encoding.TypedObject;
-import com.kolakcc.loljclient.util.FileSystem;
 
 public class RecentGame extends Game implements Comparable<RecentGame>, Serializable {
 	private static final long serialVersionUID = -3817902081361651336L;
@@ -117,38 +109,6 @@ public class RecentGame extends Game implements Comparable<RecentGame>, Serializ
 	public int getStatistic(String key) {
 		if (!statistics.containsKey(key)) return 0;
 		return statistics.get(key);
-	}
-	
-	public void save(String summonerName) throws IOException {
-		ObjectOutputStream objectOutputStream = null;
-		RandomAccessFile raf = null;
-		try {
-			raf = new RandomAccessFile(FileSystem.getFile("app://data/games/"+summonerName+"/"+getGameID()), "rw");
-			FileOutputStream fos = new FileOutputStream(raf.getFD());
-			objectOutputStream = new ObjectOutputStream(fos);
-			objectOutputStream.writeObject(this);
-		} finally {
-			if (objectOutputStream != null) {
-				objectOutputStream.close();
-			}
-			if (raf != null) {
-				raf.close();
-			}
-		}
-	}
-	
-	public static ArrayList<RecentGame> getSavedGames(Summoner summoner) throws Exception {
-		ArrayList<RecentGame> ret = new ArrayList<RecentGame>();
-		for (File game : FileSystem.getFile(String.format("app://data/games/%.0f/", summoner.getSummonerID())).listFiles()) {
-			if (!game.getName().equals("README")) {
-				FileInputStream fis = new FileInputStream(game.getAbsolutePath());
-		        ObjectInputStream ois = new ObjectInputStream(fis);
-		        ret.add((RecentGame) ois.readObject());
-		        ois.close();
-		        fis.close();
-			}
-		}
-		return ret;
 	}
 
 	@Override
