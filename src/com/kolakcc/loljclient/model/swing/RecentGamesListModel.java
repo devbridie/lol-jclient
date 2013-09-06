@@ -9,6 +9,8 @@ import javax.swing.event.ListDataListener;
 
 import com.gvaneyck.rtmp.encoding.TypedObject;
 import com.kolakcc.loljclient.model.RecentGame;
+import com.kolakcc.loljclient.model.Summoner;
+import com.kolakcc.loljclient.util.SavedRecentGamesProvider;
 
 public class RecentGamesListModel implements ListModel<RecentGame> {
 	private ArrayList<RecentGame> data = new ArrayList<RecentGame>();
@@ -42,10 +44,10 @@ public class RecentGamesListModel implements ListModel<RecentGame> {
 		Collections.reverse(this.data);
 	}
 	
-	public void saveGames(String summonerName) {
+	public void saveGames(Summoner summoner) {
 		try {
 			for (RecentGame game : data) {
-				game.save(summonerName);
+				SavedRecentGamesProvider.save(game, summoner);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

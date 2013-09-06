@@ -20,6 +20,7 @@ import com.kolakcc.loljclient.model.swing.DivisionEntryTableModel;
 import com.kolakcc.loljclient.model.swing.RecentGamesListModel;
 import com.kolakcc.loljclient.model.swing.RunesInventoryTableModel;
 import com.kolakcc.loljclient.util.NamedSwingWorker;
+import com.kolakcc.loljclient.util.SavedRecentGamesProvider;
 import com.kolakcc.loljclient.util.TOUtils;
 import com.kolakcc.loljclient.view.ProfileView;
 
@@ -78,8 +79,8 @@ public class ProfileController extends KolaController implements MouseListener, 
 					ProfileController.this.gamesListModel = new RecentGamesListModel(TOUtils.ArrayToTOArray(this.get().getArray("gameStatistics")));
 					int fromServer = ProfileController.this.gamesListModel.getSize();
 					if (summoner.getAccountID() == LoggedInSummoner.summonerData.getAccountID()) {
-						ProfileController.this.gamesListModel.addGameList(RecentGame.getSavedGames(LoggedInSummoner.summonerData));
-						ProfileController.this.gamesListModel.saveGames(LoggedInSummoner.summonerData.getSummonerName());
+						ProfileController.this.gamesListModel.addGameList(SavedRecentGamesProvider.getSavedGames(LoggedInSummoner.summonerData));
+						ProfileController.this.gamesListModel.saveGames(LoggedInSummoner.summonerData);
 					}
 					int fromCache = ProfileController.this.gamesListModel.getSize() - fromServer;
 					ProfileController.this.view.setAmountObject(new Object[] { new Integer(fromServer), new Integer(fromCache), new Integer(fromServer + fromCache) });
