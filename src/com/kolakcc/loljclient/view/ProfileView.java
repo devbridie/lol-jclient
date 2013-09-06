@@ -53,8 +53,7 @@ public class ProfileView extends KolaView {
 	JTabbedPane runePagesTabPane, leaguesTabPane;
 	
 	ChampionBox currentGameChampion;
-	static LocaleMessages generalMessages = new LocaleMessages("generalBundle"),
-						  profileViewMessages = new LocaleMessages("profileViewBundle"),
+	static LocaleMessages profileViewMessages = new LocaleMessages("profileViewBundle"),
 						  statsMessages = new LocaleMessages("statsBundle");
 	
 	public ProfileView() {
@@ -165,7 +164,7 @@ public class ProfileView extends KolaView {
 		summonerNameLabel.setText(name);
 	}
 	public void addLeague(Division division, MouseListener clickListener, ActionListener actionListener) {
-		leaguesTabPane.addTab(division.getQueue(), new DivisionPanel(division, clickListener, actionListener));
+		leaguesTabPane.addTab(LocaleMessages.leagueTermsMessages.getString(division.getQueue()), new DivisionPanel(division, clickListener, actionListener));
 	}
 	public void clearLeagues() {
 		while (leaguesTabPane.getTabCount() > 0) leaguesTabPane.remove(0);

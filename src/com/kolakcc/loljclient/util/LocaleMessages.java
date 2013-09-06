@@ -5,7 +5,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LocaleMessages {
-	public static LocaleMessages generalMessages = new LocaleMessages("generalBundle");
+	public static LocaleMessages generalMessages = new LocaleMessages("generalBundle"),
+								 leagueTermsMessages = new LocaleMessages("leagueTermsBundle");
 	
 	String bundleName;
 	ResourceBundle internalBundle;

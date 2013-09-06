@@ -11,6 +11,7 @@ import javax.swing.ListCellRenderer;
 
 import com.kolakcc.loljclient.model.Champion;
 import com.kolakcc.loljclient.model.RecentGame;
+import com.kolakcc.loljclient.util.LocaleMessages;
 import com.kolakcc.loljclient.view.ui.ChampionBox;
 
 public class RecentGameListItemRenderer implements ListCellRenderer<RecentGame> {
@@ -25,7 +26,7 @@ public class RecentGameListItemRenderer implements ListCellRenderer<RecentGame> 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ret.add(new JLabel(String.format("<html>%s %d/%d/%d<br>%s", champion.getDisplayName(), value.getStatistic("CHAMPIONS_KILLED"), value.getStatistic("NUM_DEATHS"), value.getStatistic("ASSISTS"), value.getMap().toString())),BorderLayout.CENTER);
+		ret.add(new JLabel(String.format("<html>%s %d/%d/%d<br>%s", champion.getDisplayName(), value.getStatistic("CHAMPIONS_KILLED"), value.getStatistic("NUM_DEATHS"), value.getStatistic("ASSISTS"), LocaleMessages.leagueTermsMessages.getString(value.getMap().toString()))),BorderLayout.CENTER);
 		return ret;
 	}
 }
