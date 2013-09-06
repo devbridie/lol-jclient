@@ -132,9 +132,10 @@ public class ProfileController extends KolaController implements MouseListener, 
 			}
 			protected void done() {
 				try {
-					TypedObject result = get();
-					getSummonerData(result.getTO("data").getTO("body").getDouble("acctId"));
-				} catch (InterruptedException | ExecutionException e) {
+					TypedObject result = get().getTO("data");
+					if (result.containsKey("body")) getSummonerData(result.getTO("body").getDouble("acctId"));
+					else throw new Exception(String.format("A summoner by the name of %s was not found.", searchString));
+				} catch (Exception e) {
 					ProfileController.this.HandleException(e);
 				}
 			}
