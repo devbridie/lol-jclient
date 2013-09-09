@@ -120,9 +120,15 @@ public class FriendsListController extends KolaController implements
 	public void presenceChanged(Presence presence) {
 		this.refreshLists();
 	}
-	public void chatCreated(Chat chat, boolean createdLocally) {
+	public void chatCreated(final Chat chat, boolean createdLocally) {
 		if (!createdLocally) {
-			chat.addMessageListener(new FriendChatController(chat));
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					FriendChatController chatController = new FriendChatController(chat);
+					chat.addMessageListener(chatController.getMessageListener());
+				}
+			});
 		}
 	}
 	@Override

@@ -1,31 +1,22 @@
 package com.kolakcc.loljclient.view;
 
 import java.awt.BorderLayout;
-import java.io.IOException;
 
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Presence;
 
 import com.kolakcc.loljclient.util.FontUtils;
 import com.kolakcc.loljclient.util.StatusIcon;
+import com.kolakcc.loljclient.view.ui.ChatComponent;
 
 public class FriendChatView extends KolaView {
-	public JScrollPane chatScroller;
-	public JEditorPane chatArea;
-	public JTextField talkArea;
-	public JButton send;
-	
 	JLabel statusIcon, chatName;
+	ChatComponent chatComponent;
 
 	public FriendChatView() {
 		super();
@@ -40,36 +31,21 @@ public class FriendChatView extends KolaView {
 		topPanel.add(chatName, BorderLayout.CENTER);
 		this.add(topPanel, BorderLayout.NORTH);
 
-		this.chatArea = new JEditorPane();
-		this.chatArea.setEditorKit(new HTMLEditorKit());
-		this.chatArea.setDocument(new HTMLDocument());
-		this.chatArea.setEditable(false);
-		chatScroller = new JScrollPane(this.chatArea);
-		this.add(chatScroller, BorderLayout.CENTER);
+		chatComponent = new ChatComponent();
 
-		JPanel bottomPanel = new JPanel(new BorderLayout());
-		this.talkArea = new JTextField();
-		bottomPanel.add(this.talkArea, BorderLayout.CENTER);
-		this.send = new JButton("Send");
-		bottomPanel.add(this.send, BorderLayout.EAST);
-
-		this.add(bottomPanel, BorderLayout.SOUTH);
+		this.add(chatComponent, BorderLayout.CENTER);
 		this.setVisible(true);
 	}
+	
+	public MessageListener getMessageListener() { return chatComponent; }
 
 	public void addLine(String line) {
-		HTMLDocument chatDocument = (HTMLDocument) this.chatArea.getDocument();
-		HTMLEditorKit chatKit = (HTMLEditorKit) this.chatArea.getEditorKit();
-		try {
-			chatKit.insertHTML(chatDocument, chatDocument.getLength(), line, 0, 0, null);
-		} catch (BadLocationException | IOException e) {
-			e.printStackTrace();
-		}
-		chatArea.setCaretPosition(chatArea.getDocument().getLength());
+		chatComponent.addLine(line);
 	}
 	
 	public void setInfo(Presence presence, String name) {
 		chatName.setText(name);
 		statusIcon.setIcon(StatusIcon.fromPresence(presence));
 	}
+	public void setChat(Chat chat) { chatComponent.setChat(chat); }
 }
