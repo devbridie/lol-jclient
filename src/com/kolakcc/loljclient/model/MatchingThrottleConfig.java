@@ -12,12 +12,26 @@ public class MatchingThrottleConfig extends ModelFromTO {
 		super(ito);
 		limit = getString("limit");
 		
-		//not sure on this - working offline
 		TypedObject[] propertiesFromModel = getArray("matchingThrottleProperties");
 		for (TypedObject property : propertiesFromModel) {
 			matchingThrottleProperties.add(property);
 		}
 		checkFields();
+	}
+
+	public String getLimit() {
+		return limit;
+	}
+
+	public ArrayList<Object> getMatchingThrottleProperties() {
+		return matchingThrottleProperties;
+	}
+
+	@Override
+	public String toString() {
+		return "MatchingThrottleConfig [limit=" + limit
+				+ ", matchingThrottleProperties=" + matchingThrottleProperties
+				+ "]";
 	}
 
 }
