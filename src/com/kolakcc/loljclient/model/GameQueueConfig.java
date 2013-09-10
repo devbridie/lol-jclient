@@ -41,4 +41,116 @@ public class GameQueueConfig extends ModelFromTO {
 		}
 	}
 
+	public int getBlockedMinutesThreshold() {
+		return blockedMinutesThreshold;
+	}
+
+	public int getMinimumParticipantSize() {
+		return minimumParticipantSize;
+	}
+
+	public int getMaxLevel() {
+		return maxLevel;
+	}
+
+	public int getGameTypeConfigID() {
+		return gameTypeConfigID;
+	}
+
+	public int getMinLevel() {
+		return minLevel;
+	}
+
+	public int getNumPlayersPerTeam() {
+		return numPlayersPerTeam;
+	}
+
+	public int getMaximumParticipantListSize() {
+		return maximumParticipantListSize;
+	}
+
+	public int getDataVersion() {
+		return dataVersion;
+	}
+
+	public boolean isRanked() {
+		return ranked;
+	}
+
+	public boolean isThresholdEnabled() {
+		return thresholdEnabled;
+	}
+
+	public boolean isTeamOnly() {
+		return teamOnly;
+	}
+
+	public String getPointsConfigKey() {
+		return pointsConfigKey;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getTypeString() {
+		return typeString;
+	}
+
+	public String getCacheName() {
+		return cacheName;
+	}
+
+	public String getGameMode() {
+		return gameMode;
+	}
+
+	public String getQueueBonusKey() {
+		return queueBonusKey;
+	}
+
+	public String getQueueStateString() {
+		return queueStateString;
+	}
+
+	public ArrayList<Integer> getSupportedMapIDs() {
+		return supportedMapIDs;
+	}
+
+	public double getID() {
+		return ID;
+	}
+
+	public double getThresholdSize() {
+		return thresholdSize;
+	}
+
+	public MatchingThrottleConfig getMatchingThrottleConfig() {
+		return matchingThrottleConfig;
+	}
+
+	public Object getFutureData() {
+		return futureData;
+	}
+
+	@Override
+	public String toString() {
+		return "GameQueueConfig [blockedMinutesThreshold="
+				+ blockedMinutesThreshold + ", minimumParticipantSize="
+				+ minimumParticipantSize + ", maxLevel=" + maxLevel
+				+ ", gameTypeConfigID=" + gameTypeConfigID + ", minLevel="
+				+ minLevel + ", numPlayersPerTeam=" + numPlayersPerTeam
+				+ ", maximumParticipantListSize=" + maximumParticipantListSize
+				+ ", dataVersion=" + dataVersion + ", ranked=" + ranked
+				+ ", thresholdEnabled=" + thresholdEnabled + ", teamOnly="
+				+ teamOnly + ", pointsConfigKey=" + pointsConfigKey + ", type="
+				+ type + ", typeString=" + typeString + ", cacheName="
+				+ cacheName + ", gameMode=" + gameMode + ", queueBonusKey="
+				+ queueBonusKey + ", queueStateString=" + queueStateString
+				+ ", supportedMapIDs=" + supportedMapIDs + ", ID=" + ID
+				+ ", thresholdSize=" + thresholdSize
+				+ ", matchingThrottleConfig=" + matchingThrottleConfig
+				+ ", futureData=" + futureData + "]";
+	}
+
 }
