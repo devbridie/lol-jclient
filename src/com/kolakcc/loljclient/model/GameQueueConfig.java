@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import com.gvaneyck.rtmp.encoding.TypedObject;
 
 public class GameQueueConfig extends ModelFromTO {
-	int blockedMinutesThreshold, minimumParticipantSize, maxLevel, gameTypeConfigID, minLevel, numPlayersPerTeam, maximumParticipantListSize, dataVersion;
-	boolean ranked, thresholdEnabled, teamOnly;
-	String pointsConfigKey, type, typeString, cacheName, gameMode, queueBonusKey, queueStateString;
+	int blockedMinutesThreshold, minimumParticipantSize, maxLevel, gameTypeConfigID, minLevel, numPlayersPerTeam, maximumParticipantListSize, dataVersion, minimumQueueDodgeDelayTime;
+	boolean ranked, thresholdEnabled, teamOnly, disallowFreeChampions;
+	String pointsConfigKey, type, typeString, cacheName, gameMode, queueBonusKey, queueStateString, queueState, mapSelectionAlgorithm;
 	ArrayList<Integer> supportedMapIDs;
 	double ID, thresholdSize;
 	MatchingThrottleConfig matchingThrottleConfig;
@@ -37,7 +37,15 @@ public class GameQueueConfig extends ModelFromTO {
 			gameMode = getString("gameMode");
 			queueBonusKey = getString("queueBonusKey");
 			queueStateString = getString("queueStateString");
+			futureData = getProbablyNull("futureData");
+			ID = getDouble("id");
+			thresholdSize = getInt("thresholdSize");
+			matchingThrottleConfig = new MatchingThrottleConfig(getTO("matchingThrottleConfig"));
+			disallowFreeChampions = getBool("disallowFreeChampions");
+			mapSelectionAlgorithm = getString("mapSelectionAlgorithm");
+			minimumQueueDodgeDelayTime = getInt("minimumQueueDodgeDelayTime");
 			checkFields();
+			/* TODO: com.kolakcc.loljclient.model.GameQueueConfig: Field supportedMapIds = {array=[10, 4, ], } of type com.riotgames.platform.matchmaking.GameQueueConfig is not mapped! */
 		}
 	}
 
@@ -141,16 +149,36 @@ public class GameQueueConfig extends ModelFromTO {
 				+ ", gameTypeConfigID=" + gameTypeConfigID + ", minLevel="
 				+ minLevel + ", numPlayersPerTeam=" + numPlayersPerTeam
 				+ ", maximumParticipantListSize=" + maximumParticipantListSize
-				+ ", dataVersion=" + dataVersion + ", ranked=" + ranked
-				+ ", thresholdEnabled=" + thresholdEnabled + ", teamOnly="
-				+ teamOnly + ", pointsConfigKey=" + pointsConfigKey + ", type="
-				+ type + ", typeString=" + typeString + ", cacheName="
-				+ cacheName + ", gameMode=" + gameMode + ", queueBonusKey="
-				+ queueBonusKey + ", queueStateString=" + queueStateString
-				+ ", supportedMapIDs=" + supportedMapIDs + ", ID=" + ID
-				+ ", thresholdSize=" + thresholdSize
-				+ ", matchingThrottleConfig=" + matchingThrottleConfig
-				+ ", futureData=" + futureData + "]";
+				+ ", dataVersion=" + dataVersion
+				+ ", minimumQueueDodgeDelayTime=" + minimumQueueDodgeDelayTime
+				+ ", ranked=" + ranked + ", thresholdEnabled="
+				+ thresholdEnabled + ", teamOnly=" + teamOnly
+				+ ", disallowFreeChampions=" + disallowFreeChampions
+				+ ", pointsConfigKey=" + pointsConfigKey + ", type=" + type
+				+ ", typeString=" + typeString + ", cacheName=" + cacheName
+				+ ", gameMode=" + gameMode + ", queueBonusKey=" + queueBonusKey
+				+ ", queueStateString=" + queueStateString + ", queueState="
+				+ queueState + ", mapSelectionAlgorithm="
+				+ mapSelectionAlgorithm + ", supportedMapIDs="
+				+ supportedMapIDs + ", ID=" + ID + ", thresholdSize="
+				+ thresholdSize + ", matchingThrottleConfig="
+				+ matchingThrottleConfig + ", futureData=" + futureData + "]";
+	}
+
+	public int getMinimumQueueDodgeDelayTime() {
+		return minimumQueueDodgeDelayTime;
+	}
+
+	public boolean isDisallowFreeChampions() {
+		return disallowFreeChampions;
+	}
+
+	public String getQueueState() {
+		return queueState;
+	}
+
+	public String getMapSelectionAlgorithm() {
+		return mapSelectionAlgorithm;
 	}
 
 }
