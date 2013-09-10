@@ -92,8 +92,10 @@ public class MainController extends KolaController implements ActionListener {
 				return null;
 			}
 
-			protected void process(List<String> l) {
-				System.out.println(l.get(l.size() - 1));
+			protected void process(List<String> publishedInfo) {
+				for (String listItem : publishedInfo) {
+					System.out.println(listItem);
+				}
 			}
 		};
 	}
