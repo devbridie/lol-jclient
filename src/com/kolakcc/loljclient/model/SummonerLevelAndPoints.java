@@ -18,5 +18,35 @@ public class SummonerLevelAndPoints extends ModelFromTO {
         checkFields();
     }
 
-    //TODO: generate getters, i don't know how #javanoob
+	public int getDataVersion() {
+		return dataVersion;
+	}
+
+	public Object getFutureData() {
+		return futureData;
+	}
+
+	public double getInfPoints() {
+		return infPoints;
+	}
+
+	public double getExpPoints() {
+		return expPoints;
+	}
+
+	public double getSummonerLevel() {
+		return summonerLevel;
+	}
+
+	public double getSummonerId() {
+		return summonerId;
+	}
+
+	@Override
+	public String toString() {
+		return "SummonerLevelAndPoints [dataVersion=" + dataVersion
+				+ ", futureData=" + futureData + ", infPoints=" + infPoints
+				+ ", expPoints=" + expPoints + ", summonerLevel="
+				+ summonerLevel + ", summonerId=" + summonerId + "]";
+	}
 }

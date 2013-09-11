@@ -21,5 +21,35 @@ public class SummonerTalentsAndPoints extends ModelFromTO {
         checkFields();
     }
 
-    //TODO: generate getters, i don't know how lol #javanoob
+	public int getDataVersion() {
+		return dataVersion;
+	}
+
+	public Object getFutureData() {
+		return futureData;
+	}
+
+	public int getTalentPoints() {
+		return talentPoints;
+	}
+
+	public Date getModifyDate() {
+		return modifyDate;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public double getSummonerId() {
+		return summonerId;
+	}
+
+	@Override
+	public String toString() {
+		return "SummonerTalentsAndPoints [dataVersion=" + dataVersion
+				+ ", futureData=" + futureData + ", talentPoints="
+				+ talentPoints + ", modifyDate=" + modifyDate + ", createDate="
+				+ createDate + ", summonerId=" + summonerId + "]";
+	}
 }
