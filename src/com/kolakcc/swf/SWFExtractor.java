@@ -21,6 +21,7 @@ public class SWFExtractor {
 		//check swfdump
 		File swfdump = new File("C:\\Program Files (x86)\\SWFTools\\swfdump.exe");
 		if (!swfdump.exists()) swfdump = new File("C:\\Program Files\\SWFTools\\swfdump.exe");
+        if (!swfdump.exists()) swfdump = new File("/usr/local/bin/swfdump");
 		if (!swfdump.exists()) swfdump = new File("swfdump");
 		if (!swfdump.exists()) {
 			JFileChooser swfFileChooser = new JFileChooser();
