@@ -19,6 +19,7 @@ public class RecievePacketController extends KolaController implements RTMPCallb
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+                System.out.println(result.getTO("data").getTO("body").type);
 				if (result.getString("result").equals("receive")) {
 					if (result.getTO("data").getTO("body").type.equals("com.riotgames.platform.game.GameDTO")) {
 						StartupClass.customGameLobbyController.receivePacket(result
@@ -27,7 +28,7 @@ public class RecievePacketController extends KolaController implements RTMPCallb
 						System.out.println(result.getTO("data").getTO("body"));
 						GameClient.start(new PlayerCredentials(result.getTO("data").getTO("body")));
 					} else {
-						System.out.println("Recieved packet: ");
+						System.out.println("Received packet: ");
 						System.out.println(result);
 					}
 				}

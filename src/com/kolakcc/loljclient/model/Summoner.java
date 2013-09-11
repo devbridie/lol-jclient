@@ -21,7 +21,9 @@ public class Summoner extends ModelFromTO {
 	
 	int dataVersion;
 	Object futureData;
-	
+
+    SummonerTalentsAndPoints summonerTalentsAndPoints;
+    SummonerLevelAndPoints summonerLevelAndPoints;
 	SummonerLevel summonerLevel;
 	
 	public Summoner(TypedObject allSummonerData) {
@@ -46,8 +48,10 @@ public class Summoner extends ModelFromTO {
 			}
 			if (containsKey("masteryBook")) masteryBook = new MasteryBook(getTO("masteryBook"));
 			//TODO: find out where the public mastery book info is
-			//futureData = getProbablyNull("futureData");
+			//futureData = getProbablyNull("futureData"); //why is this commented out?
 			//dataVersion = getInt("dataVersion");
+            summonerTalentsAndPoints = new SummonerTalentsAndPoints(getTO("summonerTalentsAndPoints"));
+            summonerLevelAndPoints = new SummonerLevelAndPoints(getTO("summonerLevelAndPoints"));
 			summonerLevel = new SummonerLevel(getTO("summonerLevel"));
 			checkFields();
 		}
@@ -112,6 +116,14 @@ public class Summoner extends ModelFromTO {
 	public Object getFutureData() {
 		return futureData;
 	}
+
+    public SummonerTalentsAndPoints getSummonerTalentsAndPoints() {
+        return summonerTalentsAndPoints;
+    }
+
+    public SummonerLevelAndPoints getSummonerLevelAndPoints() {
+        return summonerLevelAndPoints;
+    }
 
 	public SummonerLevel getSummonerLevel() {
 		return summonerLevel;
