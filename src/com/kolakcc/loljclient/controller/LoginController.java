@@ -110,7 +110,8 @@ public class LoginController extends KolaController implements ActionListener,
 					StartupClass.LoggedIn();
 					StartupClass.openFriends(
 							LoginController.this.view.usernameField.getText(),
-							new String(LoginController.this.view.passwordField.getPassword()));
+							new String(LoginController.this.view.passwordField.getPassword())
+                    );
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
 					LoginController.this.view.loginButton.setText("Login");
