@@ -43,7 +43,11 @@ public class Configuration {
 	public static String getLeagueDirectory() {
 		//TODO: remove useless code FileSystem checks for already
 		if (config == null) initializeProperties();
-		String uncheckedDirectory = config.getProperty("leaguedir", "C:\\Riot Games\\League of Legends\\");
+		String uncheckedDirectory;
+        if (System.getProperty("os.name").contains("OS X"))
+            uncheckedDirectory = config.getProperty("leaguedir", "/Applications/League of Legends.app/Contents/LOL/");
+        else
+            uncheckedDirectory = config.getProperty("leaguedir", "C:\\Riot Games\\League of Legends\\");
 		if (!uncheckedDirectory.endsWith(File.separator)) uncheckedDirectory = uncheckedDirectory + File.separator;
 		config.put("leaguedir",uncheckedDirectory);
 		Configuration.flushConfig();
