@@ -130,7 +130,7 @@ public class ChampionDetailedView extends KolaView {
 				+ champion.getQuoteAuthor());
 		tipsPlayingTitle.setText(championDetailedViewMessages.getComplexString("playing as", new Object[] { champion.getDisplayName() }));
 		tipsPlayingTips.setText("<html>" + champion.getTips().replace("*", "<li>"));
-		tipsPlayingTitle.setText(championDetailedViewMessages.getComplexString("playing against", new Object[] { champion.getDisplayName() }));
+		tipsPlayingAgainstTitle.setText(championDetailedViewMessages.getComplexString("playing against", new Object[] { champion.getDisplayName() }));
 		tipsPlayingAgainstTips.setText("<html>" + champion.getOpponentTips().replace("*", "<li>"));
 		for (ChampionSkin skin : champion.getSkins()) {
 			Box skinBox = Box.createVerticalBox();
