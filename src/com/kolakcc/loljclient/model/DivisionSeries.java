@@ -5,6 +5,7 @@ import com.gvaneyck.rtmp.encoding.TypedObject;
 public class DivisionSeries extends ModelFromTO {
 	int target, losses, wins;
 	double timeLeftToPlay; //in milliseconds
+    String progress;
 	
 	public DivisionSeries(TypedObject ito) {
 		super(ito);
@@ -12,6 +13,7 @@ public class DivisionSeries extends ModelFromTO {
 		losses = getInt("losses");
 		wins = getInt("wins");
 		timeLeftToPlay = getDouble("timeLeftToPlayMillis");
+        progress = getString("progress");
 		checkFields();
 	}
 
@@ -30,6 +32,10 @@ public class DivisionSeries extends ModelFromTO {
 	public double getTimeLeftToPlay() {
 		return timeLeftToPlay;
 	}
+
+    public String getProgress(){
+        return progress;
+    }
 
 	@Override
 	public String toString() {

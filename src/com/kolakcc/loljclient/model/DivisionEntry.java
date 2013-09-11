@@ -4,7 +4,7 @@ import com.gvaneyck.rtmp.encoding.TypedObject;
 
 public class DivisionEntry extends ModelFromTO implements Comparable<DivisionEntry> {
 	boolean hotStreak, inactive, recruit, veteran;
-	double lastPlayed, timeUntilDecay, timeSinceLastDecayMessageShown;
+	double lastPlayed, timeUntilDecay, timeLastDecayMessageShown;
 	int leaguePoints, losses, previousDayLeaguePosition, wins;
 	DivisionSeries series;
 	String playerOrTeamName, playerOrTeamID, queueType, rank, tier, leagueName;
@@ -17,8 +17,8 @@ public class DivisionEntry extends ModelFromTO implements Comparable<DivisionEnt
 		veteran = getBool("veteran");
 		
 		lastPlayed = getDouble("lastPlayed");
-		//timeSinceLastDecayMessageShown = getDouble("timeSinceLastDecayMessageShown");
-		//timeUntilDecay = getDouble("timeUntilDecay");
+		timeLastDecayMessageShown = getDouble("timeLastDecayMessageShown");
+		timeUntilDecay = getDouble("timeUntilDecay");
 		
 		leaguePoints = getInt("leaguePoints");
 		losses = getInt("losses");
@@ -32,7 +32,7 @@ public class DivisionEntry extends ModelFromTO implements Comparable<DivisionEnt
 		queueType = getString("queueType");
 		rank = getString("rank"); // I, II, III, IV, V
 		tier = getString("tier"); // SILVER, etc
-		//leagueName = getString("leagueName");
+		leagueName = getString("leagueName");
 		
 		checkFields();
 	}
@@ -123,8 +123,8 @@ public class DivisionEntry extends ModelFromTO implements Comparable<DivisionEnt
 		return timeUntilDecay;
 	}
 
-	public double getTimeSinceLastDecayMessageShown() {
-		return timeSinceLastDecayMessageShown;
+	public double getTimeLastDecayMessageShown() {
+		return timeLastDecayMessageShown;
 	}
 
 	public String getLeagueName() {
