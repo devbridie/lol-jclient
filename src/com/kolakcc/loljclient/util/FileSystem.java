@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileSystem {
+    private static String clientDeployPath = null;
 	//TODO: move all filesystem calls to here
 	public static File getFile(String path) {
 		//should have a form like lol://RADS/... or app://
@@ -63,6 +64,10 @@ public class FileSystem {
 	}
 	
 	public static File getRADSFile(String path) { //convience
-		return getFile("lol://RADS/projects/lol_air_client/releases/?/deploy/"+path);
+        if(clientDeployPath != null) return getFile(clientDeployPath+path);
+        File bin = getFile("lol://RADS/projects/lol_air_client/releases/?/deploy/bin"); //this is the path for Mac
+        if(bin.exists()) clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/bin/";
+        else clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/";
+        return getFile(clientDeployPath+path);
 	}
 }
