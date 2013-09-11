@@ -12,7 +12,15 @@ import com.kolakcc.loljclient.StartupClass;
 import com.kolakcc.loljclient.model.PlayerCredentials;
 public class GameClient {
 	private static File getEXE() {
-		return FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/League of Legends.exe");
+        File exe;
+        try {
+            exe = FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/League of Legends.exe");
+        } catch(RuntimeException e) {
+            //file not found, so we are probably on Mac
+            //TODO: figure out why this doesnt work
+            exe = FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/LeagueOfLegends.app/Contents/MacOS/LeagueofLegends");
+        }
+        return exe;
 	}
 	public static void start() {
 		ArrayList<String> arguments = new ArrayList<String>();

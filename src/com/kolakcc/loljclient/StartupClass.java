@@ -84,6 +84,11 @@ public class StartupClass {
 							found = true;
 							break;
 						}
+                        if (checkFile.getName().equals("Play League Of Legends.app")) {
+                            System.out.println("Found Play League Of Legends.app.");
+                            found = true;
+                            break;
+                        }
 					}
 					if (found) {
 						System.out.println("This seems to be a valid league directory.");
