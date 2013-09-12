@@ -65,9 +65,12 @@ public class FileSystem {
 	
 	public static File getRADSFile(String path) { //convience
         if(clientDeployPath != null) return getFile(clientDeployPath+path);
-        File bin = getFile("lol://RADS/projects/lol_air_client/releases/?/deploy/bin"); //this is the path for Mac
-        if(bin.exists()) clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/bin/";
-        else clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/";
+        File ret = null;
+        try {
+        	ret = getFile("lol://RADS/projects/lol_air_client/releases/?/deploy/bin"); //this is the path for Mac
+        	if(ret.exists()) clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/bin/";
+        } catch (Exception e) { /* suppress error for non-mac systems TODO: do this better */ }
+        if ((ret == null) || (!ret.exists())) clientDeployPath = "lol://RADS/projects/lol_air_client/releases/?/deploy/";
         return getFile(clientDeployPath+path);
 	}
 }
