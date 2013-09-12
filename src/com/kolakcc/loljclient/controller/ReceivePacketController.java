@@ -8,8 +8,8 @@ import com.kolakcc.loljclient.StartupClass;
 import com.kolakcc.loljclient.model.PlayerCredentials;
 import com.kolakcc.loljclient.util.GameClient;
 
-public class RecievePacketController extends KolaController implements RTMPCallback {
-	public RecievePacketController() {
+public class ReceivePacketController extends KolaController implements RTMPCallback {
+	public ReceivePacketController() {
 	}
 
 	@Override
