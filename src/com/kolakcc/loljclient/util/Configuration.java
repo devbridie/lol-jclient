@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class Configuration {
-	public static String PVPVersion = "3.11.13_08_30_19_21";
+	public static String PVPVersion = "3.11.13_09_09_12_02";
 	private static Properties config = null;
 	private static File configFile = null;
 	
