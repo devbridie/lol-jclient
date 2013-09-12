@@ -19,7 +19,7 @@ import com.kolakcc.loljclient.controller.FriendsListController;
 import com.kolakcc.loljclient.controller.LoginController;
 import com.kolakcc.loljclient.controller.MainController;
 import com.kolakcc.loljclient.controller.ProfileController;
-import com.kolakcc.loljclient.controller.RecievePacketController;
+import com.kolakcc.loljclient.controller.ReceivePacketController;
 import com.kolakcc.loljclient.controller.StoreController;
 import com.kolakcc.loljclient.model.Champion;
 import com.kolakcc.loljclient.model.CustomGameListItem;
@@ -45,7 +45,7 @@ public class StartupClass {
 	public static void LoggedIn() {
 		loginController.dispose();
 		mainController = new MainController();
-		Client.setReceiveHandler(new RecievePacketController());
+		Client.setReceiveHandler(new ReceivePacketController());
 	}
 
 	public static void main(String[] args) {
