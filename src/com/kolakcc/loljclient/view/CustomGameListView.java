@@ -6,10 +6,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JPanel;
 
 public class CustomGameListView extends KolaView {
 	public JTable gamesListTable;
 	public JButton refreshButton;
+	public JButton createButton;
 	public JButton filterButton;
 	
 	public CustomGameListView() {
@@ -23,9 +25,16 @@ public class CustomGameListView extends KolaView {
 		gamesListTable = new JTable();
 		JScrollPane scroller = new JScrollPane(this.gamesListTable);
 		this.add(scroller, BorderLayout.CENTER);
-		
+
+        JPanel panel = new JPanel(new BorderLayout());
+
 		filterButton = new JButton("Filters");
-		this.add(filterButton, BorderLayout.SOUTH);
+        panel.add(filterButton, BorderLayout.WEST);
+
+        createButton = new JButton("Create Game");
+        panel.add(createButton, BorderLayout.EAST);
+
+        this.add(panel, BorderLayout.SOUTH);
 		
 		this.pack();
 		this.setVisible(true);
