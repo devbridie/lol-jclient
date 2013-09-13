@@ -29,34 +29,44 @@ public class CustomGameLobbyController extends KolaController implements
 	TeamListModel team2Model;
 
 	//TODO: data with a higher optimistcLock has a higher priority.
+    private CustomGameLobbyController() {
+        this.view = new CustomGameLobbyView();
+        this.view.quitGameButton.addActionListener(this);
+        this.view.addBotOnTeam1Button.addActionListener(this);
+        this.view.addBotOnTeam2Button.addActionListener(this);
+        this.view.swapTeamButton.addActionListener(this);
+        this.view.startGameButton.addActionListener(this);
+        this.view.addWindowListener(this);
+        this.setView(this.view);
+    }
 	public CustomGameLobbyController(CustomGameListItem game) {
 		this(game.getID());
 	}
 	public CustomGameLobbyController(int gameID) {
+        this();
 		this.gameID = gameID;
-		this.view = new CustomGameLobbyView();
-		this.view.quitGameButton.addActionListener(this);
-		this.view.addBotOnTeam1Button.addActionListener(this);
-		this.view.addBotOnTeam2Button.addActionListener(this);
-		this.view.swapTeamButton.addActionListener(this);
-		this.view.startGameButton.addActionListener(this);
-		this.view.addWindowListener(this);
-		this.setView(this.view);
 		this.initializeWorkers();
 		this.joinGameWorker.execute();
 	}
+
+    public CustomGameLobbyController(TypedObject result) {
+        this();
+        this.receivePacket(result);
+        this.gameID = gameDetailed.getID();
+    }
 
 	public void actionPerformed(ActionEvent event) {
 		try {
 			if (event.getSource() == view.quitGameButton) {
 				closeLobby();
 			} else if (event.getSource() == view.swapTeamButton) {
-				int id = StartupClass.Client.invoke("gameService", "switchTeams", new Object[] { new Double(gameID) });
+				int id = StartupClass.Client.invoke("gameService", "switchTeams", new Object[] { gameID });
 				System.out.println(StartupClass.Client.getResult(id));
 			} else if (event.getSource() == view.startGameButton) {
-				int id = StartupClass.Client.invoke("gameService", "startChampionSelection", new Object[] { new Integer(gameID), 1 }); //TODO: what is this 1?
+                System.out.println("gameID: " + gameID);
+				int id = StartupClass.Client.invoke("gameService", "startChampionSelection", new Object[] { gameID, 1 }); //TODO: what is this 1?
 				TypedObject result = StartupClass.Client.getResult(id).getTO("data");
-				System.out.println(result);
+				System.out.println(result.toPrettyString());
 			}
 		} catch (Exception e) { e.printStackTrace(); }
 	}
