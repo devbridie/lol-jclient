@@ -7,7 +7,7 @@ import com.gvaneyck.rtmp.encoding.TypedObject;
 public class GameQueueConfig extends ModelFromTO {
 	int blockedMinutesThreshold, minimumParticipantSize, maxLevel, gameTypeConfigID, minLevel, numPlayersPerTeam, maximumParticipantListSize, dataVersion, minimumQueueDodgeDelayTime;
 	boolean ranked, thresholdEnabled, teamOnly, disallowFreeChampions;
-	String pointsConfigKey, type, typeString, cacheName, gameMode, queueBonusKey, queueStateString, queueState, mapSelectionAlgorithm;
+	String pointsConfigKey, type, typeString, cacheName, gameMode, queueBonusKey, queueState, queueStateString, mapSelectionAlgorithm;
 	ArrayList<Integer> supportedMapIDs;
 	double ID, thresholdSize;
 	MatchingThrottleConfig matchingThrottleConfig;
@@ -36,6 +36,7 @@ public class GameQueueConfig extends ModelFromTO {
 			cacheName = getString("cacheName");
 			gameMode = getString("gameMode");
 			queueBonusKey = getString("queueBonusKey");
+			queueState = getString("queueState");
 			queueStateString = getString("queueStateString");
 			futureData = getProbablyNull("futureData");
 			ID = getDouble("id");
@@ -44,8 +45,14 @@ public class GameQueueConfig extends ModelFromTO {
 			disallowFreeChampions = getBool("disallowFreeChampions");
 			mapSelectionAlgorithm = getString("mapSelectionAlgorithm");
 			minimumQueueDodgeDelayTime = getInt("minimumQueueDodgeDelayTime");
+			
+			supportedMapIDs = new ArrayList<Integer>();
+			TypedObject temporarySupportedMapIDs = getTO("supportedMapIds");
+			Object[] mapIDs = temporarySupportedMapIDs.getArray("array");
+			for (Object to : mapIDs) {
+				supportedMapIDs.add((Integer) to);
+			}
 			checkFields();
-			/* TODO: com.kolakcc.loljclient.model.GameQueueConfig: Field supportedMapIds = {array=[10, 4, ], } of type com.riotgames.platform.matchmaking.GameQueueConfig is not mapped! */
 		}
 	}
 
@@ -117,10 +124,6 @@ public class GameQueueConfig extends ModelFromTO {
 		return queueBonusKey;
 	}
 
-	public String getQueueStateString() {
-		return queueStateString;
-	}
-
 	public ArrayList<Integer> getSupportedMapIDs() {
 		return supportedMapIDs;
 	}
@@ -157,8 +160,7 @@ public class GameQueueConfig extends ModelFromTO {
 				+ ", pointsConfigKey=" + pointsConfigKey + ", type=" + type
 				+ ", typeString=" + typeString + ", cacheName=" + cacheName
 				+ ", gameMode=" + gameMode + ", queueBonusKey=" + queueBonusKey
-				+ ", queueStateString=" + queueStateString + ", queueState="
-				+ queueState + ", mapSelectionAlgorithm="
+				+ ", queueState=" + queueState + ", mapSelectionAlgorithm="
 				+ mapSelectionAlgorithm + ", supportedMapIDs="
 				+ supportedMapIDs + ", ID=" + ID + ", thresholdSize="
 				+ thresholdSize + ", matchingThrottleConfig="
