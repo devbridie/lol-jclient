@@ -76,6 +76,8 @@ public class LoginController extends KolaController implements ActionListener,
 		} else if (e.getSource().equals(this.view.rememberPassword)) {
 			if (!this.view.rememberPassword.isEnabled()) Configuration.set("password", "");
 		} else {
+			this.view.usernameField.setEnabled(false);
+			this.view.passwordField.setEnabled(false);
 			this.view.loginButton.setEnabled(false);
 			this.loginWorker.execute();
 		}
@@ -116,6 +118,8 @@ public class LoginController extends KolaController implements ActionListener,
 					e.printStackTrace();
 					LoginController.this.view.loginButton.setText("Login");
 					LoginController.this.view.loginButton.setEnabled(true);
+					LoginController.this.view.usernameField.setEnabled(true);
+					LoginController.this.view.passwordField.setEnabled(true);
 					LoginController.this.initalizeWorkers();
 					LoginController.this.HandleException("Invalid username/password.",e);
 				}
