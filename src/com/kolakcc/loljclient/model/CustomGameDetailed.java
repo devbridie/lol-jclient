@@ -101,7 +101,7 @@ public class CustomGameDetailed extends ModelFromTO { //TODO: group this and cus
 		
 		observers = getArray("observers");
 		bannedChampions = getArray("bannedChampions");
-		banOrder = getArray("banOrder");
+		//banOrder = getArray("banOrder");
 		joinTimerDuration = getInt("joinTimerDuration");
 		checkFields();
 	}

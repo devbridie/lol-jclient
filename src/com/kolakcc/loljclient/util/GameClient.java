@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Map;
 
 import com.kolakcc.loljclient.StartupClass;
 import com.kolakcc.loljclient.model.PlayerCredentials;
@@ -17,7 +18,6 @@ public class GameClient {
             exe = FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/League of Legends.exe");
         } catch(RuntimeException e) {
             //file not found, so we are probably on Mac
-            //TODO: figure out why this doesnt work
             exe = FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/LeagueOfLegends.app/Contents/MacOS/LeagueofLegends");
         }
         return exe;
@@ -54,7 +54,9 @@ public class GameClient {
 			}
 			System.out.println(pb.command());
 			System.out.println(FileSystem.getFile("lol://RADS/solutions/lol_game_client_sln/releases/?/deploy/"));
-			pb.start();
+            Map<String, String> env = pb.environment();
+            env.put("riot_launched", "true");
+            pb.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
