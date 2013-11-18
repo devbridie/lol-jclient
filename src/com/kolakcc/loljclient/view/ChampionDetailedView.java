@@ -29,8 +29,9 @@ import com.kolakcc.loljclient.view.ui.VerticalJScrollPane;
 public class ChampionDetailedView extends KolaView {
 	LocalizedJLabel championName, championTitle, tipsPlayingTitle, tipsPlayingTips, tipsPlayingAgainstTitle, tipsPlayingAgainstTips;
 	ChampionBox championIcon;
-	JPanel skinsPanel;
-
+	JPanel skinsPanel; //Displays stats for particular Champions
+	
+	JEditorPane statsPanel;
 	JButton selectionAudioButton;
 	JPanel topPanel;
 	JEditorPane loreTabPanel;
@@ -67,6 +68,14 @@ public class ChampionDetailedView extends KolaView {
 		JScrollPane skinScroller = new VerticalJScrollPane(this.skinsPanel);
 		skinScroller.getVerticalScrollBar().setUnitIncrement(16);
 		tabbedPane.addTab(championDetailedViewMessages.getString("skins"), skinScroller);
+		
+		this.statsPanel = new JEditorPane();
+		this.statsPanel.setContentType("text/html");
+		this.statsPanel.setEditable(false);
+		
+		JScrollPane statsScroller = new VerticalJScrollPane(this.statsPanel);
+		statsScroller.getVerticalScrollBar().setUnitIncrement(16);
+		tabbedPane.addTab(championDetailedViewMessages.getString("stats"), statsScroller);
 
 		this.loreTabPanel = new JEditorPane();
 		this.loreTabPanel.setContentType("text/html");
