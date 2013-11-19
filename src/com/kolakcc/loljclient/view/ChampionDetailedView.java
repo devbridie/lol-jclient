@@ -29,9 +29,9 @@ import com.kolakcc.loljclient.view.ui.VerticalJScrollPane;
 public class ChampionDetailedView extends KolaView {
 	LocalizedJLabel championName, championTitle, tipsPlayingTitle, tipsPlayingTips, tipsPlayingAgainstTitle, tipsPlayingAgainstTips;
 	ChampionBox championIcon;
-	JPanel skinsPanel; //Displays stats for particular Champions
+	JPanel skinsPanel; 
 	
-	JEditorPane statsPanel;
+	JEditorPane statsPanel; //Displays stats for particular Champions
 	JButton selectionAudioButton;
 	JPanel topPanel;
 	JEditorPane loreTabPanel;
@@ -69,13 +69,14 @@ public class ChampionDetailedView extends KolaView {
 		skinScroller.getVerticalScrollBar().setUnitIncrement(16);
 		tabbedPane.addTab(championDetailedViewMessages.getString("skins"), skinScroller);
 		
+		
 		this.statsPanel = new JEditorPane();
 		this.statsPanel.setContentType("text/html");
 		this.statsPanel.setEditable(false);
 		
 		JScrollPane statsScroller = new VerticalJScrollPane(this.statsPanel);
 		statsScroller.getVerticalScrollBar().setUnitIncrement(16);
-		tabbedPane.addTab(championDetailedViewMessages.getString("stats"), statsScroller);
+		tabbedPane.addTab(championDetailedViewMessages.getString("Stats"), statsScroller);
 
 		this.loreTabPanel = new JEditorPane();
 		this.loreTabPanel.setContentType("text/html");
@@ -141,6 +142,36 @@ public class ChampionDetailedView extends KolaView {
 		tipsPlayingTips.setText("<html>" + champion.getTips().replace("*", "<li>"));
 		tipsPlayingAgainstTitle.setText(championDetailedViewMessages.getComplexString("playing against", new Object[] { champion.getDisplayName() }));
 		tipsPlayingAgainstTips.setText("<html>" + champion.getOpponentTips().replace("*", "<li>"));
+		statsPanel.setText(
+				"<html>"
+				+ "Health:"
+				+ "<br> " + champion.getHealthBase() + "(+" + champion.getHealthLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Health Regen:"
+				+ "<br> " + champion.getHealthRegenBase() + "(+" + champion.getHealthLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Mana:"
+				+ "<br> " + champion.getManaBase() + "(+" + champion.getManaLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Mana Regen:"
+				+ "<br> " + champion.getManaRegenBase() + "(+" + champion.getManaLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Attack Damage:"
+				+ "<br> " + champion.getAttackBase() + "(+" + champion.getAttackLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Armor:"
+				+ "<br> " + champion.getArmorBase() + "(+" + champion.getArmorLevel() + " per level)"
+				+ "<br>"
+//				+ "<br>Attack Speed:"
+//				+ "<br> " + champion.get + "(+" + champion.getHealthLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Magic Resist:"
+				+ "<br> " + champion.getMagicResistBase() + "(+" + champion.getMagicResistLevel() + " per level)"
+				+ "<br>"
+				+ "<br>Movement Speed:"
+				+ "<br> " + champion.getMovementSpeed()
+				+ "</html>"
+				);
 		for (ChampionSkin skin : champion.getSkins()) {
 			Box skinBox = Box.createVerticalBox();
 			JLabel skinName = new JLabel(skin.isDefault() ? champion.getDisplayName() : skin.getDisplayName());
