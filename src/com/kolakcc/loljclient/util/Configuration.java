@@ -17,6 +17,12 @@ public class Configuration {
 		try {
 			if (!configFile.exists()) configFile.createNewFile();
 			config.load(new FileInputStream(configFile));
+			String password = config.getProperty("password");
+			if (password != null) {
+				password = AES.decrypt(password);
+				config.setProperty("password", password);
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,6 +92,9 @@ public class Configuration {
 	
 	public static void set(String key, String value) {
 		if (config == null) initializeProperties();
+		if (key == "password") {
+			value = AES.encrypt(value);
+		}
 		config.put(key, value);
 		Configuration.flushConfig();
 	}

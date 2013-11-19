@@ -1,0 +1,242 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    package org.apache.commons.codec.language.bm;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    import org.apache.commons.codec.EncoderException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import org.apache.commons.codec.StringEncoder;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    /**<a name="line.23"></a>
+<FONT color="green">024</FONT>     * Encodes strings into their Beider-Morse phonetic encoding.<a name="line.24"></a>
+<FONT color="green">025</FONT>     * &lt;p&gt;<a name="line.25"></a>
+<FONT color="green">026</FONT>     * Beider-Morse phonetic encodings are optimised for family names. However, they may be useful for a wide range<a name="line.26"></a>
+<FONT color="green">027</FONT>     * of words.<a name="line.27"></a>
+<FONT color="green">028</FONT>     * &lt;p&gt;<a name="line.28"></a>
+<FONT color="green">029</FONT>     * This encoder is intentionally mutable to allow dynamic configuration through bean properties. As such, it<a name="line.29"></a>
+<FONT color="green">030</FONT>     * is mutable, and may not be thread-safe. If you require a guaranteed thread-safe encoding then use<a name="line.30"></a>
+<FONT color="green">031</FONT>     * {@link PhoneticEngine} directly.<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;p&gt;<a name="line.32"></a>
+<FONT color="green">033</FONT>     * &lt;b&gt;Encoding overview&lt;/b&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>     * &lt;p&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     * Beider-Morse phonetic encodings is a multi-step process. Firstly, a table of rules is consulted to guess what<a name="line.35"></a>
+<FONT color="green">036</FONT>     * language the word comes from. For example, if it ends in "&lt;code&gt;ault&lt;/code&gt;" then it infers that the word is French.<a name="line.36"></a>
+<FONT color="green">037</FONT>     * Next, the word is translated into a phonetic representation using a language-specific phonetics table. Some<a name="line.37"></a>
+<FONT color="green">038</FONT>     * runs of letters can be pronounced in multiple ways, and a single run of letters may be potentially broken up<a name="line.38"></a>
+<FONT color="green">039</FONT>     * into phonemes at different places, so this stage results in a set of possible language-specific phonetic<a name="line.39"></a>
+<FONT color="green">040</FONT>     * representations. Lastly, this language-specific phonetic representation is processed by a table of rules that<a name="line.40"></a>
+<FONT color="green">041</FONT>     * re-writes it phonetically taking into account systematic pronunciation differences between languages, to move<a name="line.41"></a>
+<FONT color="green">042</FONT>     * it towards a pan-indo-european phonetic representation. Again, sometimes there are multiple ways this could be<a name="line.42"></a>
+<FONT color="green">043</FONT>     * done and sometimes things that can be pronounced in several ways in the source language have only one way to<a name="line.43"></a>
+<FONT color="green">044</FONT>     * represent them in this average phonetic language, so the result is again a set of phonetic spellings.<a name="line.44"></a>
+<FONT color="green">045</FONT>     * &lt;p&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>     * Some names are treated as having multiple parts. This can be due to two things. Firstly, they may be hyphenated.<a name="line.46"></a>
+<FONT color="green">047</FONT>     * In this case, each individual hyphenated word is encoded, and then these are combined end-to-end for the final<a name="line.47"></a>
+<FONT color="green">048</FONT>     * encoding. Secondly, some names have standard prefixes, for example, "&lt;code&gt;Mac/Mc&lt;/code&gt;" in Scottish (English)<a name="line.48"></a>
+<FONT color="green">049</FONT>     * names. As sometimes it is ambiguous whether the prefix is intended or is an accident of the spelling, the word<a name="line.49"></a>
+<FONT color="green">050</FONT>     * is encoded once with the prefix and once without it. The resulting encoding contains one and then the other result.<a name="line.50"></a>
+<FONT color="green">051</FONT>     * &lt;p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>     * &lt;b&gt;Encoding format&lt;/b&gt;<a name="line.52"></a>
+<FONT color="green">053</FONT>     * &lt;p&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>     * Individual phonetic spellings of an input word are represented in upper- and lower-case roman characters. Where<a name="line.54"></a>
+<FONT color="green">055</FONT>     * there are multiple possible phonetic representations, these are joined with a pipe (&lt;code&gt;|&lt;/code&gt;) character.<a name="line.55"></a>
+<FONT color="green">056</FONT>     * If multiple hyphenated words where found, or if the word may contain a name prefix, each encoded word is placed<a name="line.56"></a>
+<FONT color="green">057</FONT>     * in elipses and these blocks are then joined with hyphens. For example, "&lt;code&gt;d'ortley&lt;/code&gt;" has a possible<a name="line.57"></a>
+<FONT color="green">058</FONT>     * prefix. The form without prefix encodes to "&lt;code&gt;ortlaj|ortlej&lt;/code&gt;", while the form with prefix encodes to<a name="line.58"></a>
+<FONT color="green">059</FONT>     * "&lt;code&gt;dortlaj|dortlej&lt;/code&gt;". Thus, the full, combined encoding is "{@code (ortlaj|ortlej)-(dortlaj|dortlej)}".<a name="line.59"></a>
+<FONT color="green">060</FONT>     * &lt;p&gt;<a name="line.60"></a>
+<FONT color="green">061</FONT>     * The encoded forms are often quite a bit longer than the input strings. This is because a single input may have many<a name="line.61"></a>
+<FONT color="green">062</FONT>     * potential phonetic interpretations. For example, "&lt;code&gt;Renault&lt;/code&gt;" encodes to<a name="line.62"></a>
+<FONT color="green">063</FONT>     * "&lt;code&gt;rYnDlt|rYnalt|rYnult|rinDlt|rinalt|rinult&lt;/code&gt;". The &lt;code&gt;APPROX&lt;/code&gt; rules will tend to produce larger<a name="line.63"></a>
+<FONT color="green">064</FONT>     * encodings as they consider a wider range of possible, approximate phonetic interpretations of the original word.<a name="line.64"></a>
+<FONT color="green">065</FONT>     * Down-stream applications may wish to further process the encoding for indexing or lookup purposes, for example, by<a name="line.65"></a>
+<FONT color="green">066</FONT>     * splitting on pipe (&lt;code&gt;|&lt;/code&gt;) and indexing under each of these alternatives.<a name="line.66"></a>
+<FONT color="green">067</FONT>     *<a name="line.67"></a>
+<FONT color="green">068</FONT>     * @since 1.6<a name="line.68"></a>
+<FONT color="green">069</FONT>     * @version $Id: BeiderMorseEncoder.java 1429868 2013-01-07 16:08:05Z ggregory $<a name="line.69"></a>
+<FONT color="green">070</FONT>     */<a name="line.70"></a>
+<FONT color="green">071</FONT>    public class BeiderMorseEncoder implements StringEncoder {<a name="line.71"></a>
+<FONT color="green">072</FONT>        // Implementation note: This class is a spring-friendly facade to PhoneticEngine. It allows read/write configuration<a name="line.72"></a>
+<FONT color="green">073</FONT>        // of an immutable PhoneticEngine instance that will be delegated to for the actual encoding.<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        // a cached object<a name="line.75"></a>
+<FONT color="green">076</FONT>        private PhoneticEngine engine = new PhoneticEngine(NameType.GENERIC, RuleType.APPROX, true);<a name="line.76"></a>
+<FONT color="green">077</FONT>    <a name="line.77"></a>
+<FONT color="green">078</FONT>        @Override<a name="line.78"></a>
+<FONT color="green">079</FONT>        public Object encode(final Object source) throws EncoderException {<a name="line.79"></a>
+<FONT color="green">080</FONT>            if (!(source instanceof String)) {<a name="line.80"></a>
+<FONT color="green">081</FONT>                throw new EncoderException("BeiderMorseEncoder encode parameter is not of type String");<a name="line.81"></a>
+<FONT color="green">082</FONT>            }<a name="line.82"></a>
+<FONT color="green">083</FONT>            return encode((String) source);<a name="line.83"></a>
+<FONT color="green">084</FONT>        }<a name="line.84"></a>
+<FONT color="green">085</FONT>    <a name="line.85"></a>
+<FONT color="green">086</FONT>        @Override<a name="line.86"></a>
+<FONT color="green">087</FONT>        public String encode(final String source) throws EncoderException {<a name="line.87"></a>
+<FONT color="green">088</FONT>            if (source == null) {<a name="line.88"></a>
+<FONT color="green">089</FONT>                return null;<a name="line.89"></a>
+<FONT color="green">090</FONT>            }<a name="line.90"></a>
+<FONT color="green">091</FONT>            return this.engine.encode(source);<a name="line.91"></a>
+<FONT color="green">092</FONT>        }<a name="line.92"></a>
+<FONT color="green">093</FONT>    <a name="line.93"></a>
+<FONT color="green">094</FONT>        /**<a name="line.94"></a>
+<FONT color="green">095</FONT>         * Gets the name type currently in operation.<a name="line.95"></a>
+<FONT color="green">096</FONT>         *<a name="line.96"></a>
+<FONT color="green">097</FONT>         * @return the NameType currently being used<a name="line.97"></a>
+<FONT color="green">098</FONT>         */<a name="line.98"></a>
+<FONT color="green">099</FONT>        public NameType getNameType() {<a name="line.99"></a>
+<FONT color="green">100</FONT>            return this.engine.getNameType();<a name="line.100"></a>
+<FONT color="green">101</FONT>        }<a name="line.101"></a>
+<FONT color="green">102</FONT>    <a name="line.102"></a>
+<FONT color="green">103</FONT>        /**<a name="line.103"></a>
+<FONT color="green">104</FONT>         * Gets the rule type currently in operation.<a name="line.104"></a>
+<FONT color="green">105</FONT>         *<a name="line.105"></a>
+<FONT color="green">106</FONT>         * @return the RuleType currently being used<a name="line.106"></a>
+<FONT color="green">107</FONT>         */<a name="line.107"></a>
+<FONT color="green">108</FONT>        public RuleType getRuleType() {<a name="line.108"></a>
+<FONT color="green">109</FONT>            return this.engine.getRuleType();<a name="line.109"></a>
+<FONT color="green">110</FONT>        }<a name="line.110"></a>
+<FONT color="green">111</FONT>    <a name="line.111"></a>
+<FONT color="green">112</FONT>        /**<a name="line.112"></a>
+<FONT color="green">113</FONT>         * Discovers if multiple possible encodings are concatenated.<a name="line.113"></a>
+<FONT color="green">114</FONT>         *<a name="line.114"></a>
+<FONT color="green">115</FONT>         * @return true if multiple encodings are concatenated, false if just the first one is returned<a name="line.115"></a>
+<FONT color="green">116</FONT>         */<a name="line.116"></a>
+<FONT color="green">117</FONT>        public boolean isConcat() {<a name="line.117"></a>
+<FONT color="green">118</FONT>            return this.engine.isConcat();<a name="line.118"></a>
+<FONT color="green">119</FONT>        }<a name="line.119"></a>
+<FONT color="green">120</FONT>    <a name="line.120"></a>
+<FONT color="green">121</FONT>        /**<a name="line.121"></a>
+<FONT color="green">122</FONT>         * Sets how multiple possible phonetic encodings are combined.<a name="line.122"></a>
+<FONT color="green">123</FONT>         *<a name="line.123"></a>
+<FONT color="green">124</FONT>         * @param concat<a name="line.124"></a>
+<FONT color="green">125</FONT>         *            true if multiple encodings are to be combined with a '|', false if just the first one is<a name="line.125"></a>
+<FONT color="green">126</FONT>         *            to be considered<a name="line.126"></a>
+<FONT color="green">127</FONT>         */<a name="line.127"></a>
+<FONT color="green">128</FONT>        public void setConcat(final boolean concat) {<a name="line.128"></a>
+<FONT color="green">129</FONT>            this.engine = new PhoneticEngine(this.engine.getNameType(),<a name="line.129"></a>
+<FONT color="green">130</FONT>                                             this.engine.getRuleType(),<a name="line.130"></a>
+<FONT color="green">131</FONT>                                             concat,<a name="line.131"></a>
+<FONT color="green">132</FONT>                                             this.engine.getMaxPhonemes());<a name="line.132"></a>
+<FONT color="green">133</FONT>        }<a name="line.133"></a>
+<FONT color="green">134</FONT>    <a name="line.134"></a>
+<FONT color="green">135</FONT>        /**<a name="line.135"></a>
+<FONT color="green">136</FONT>         * Sets the type of name. Use {@link NameType#GENERIC} unless you specifically want phonetic encodings<a name="line.136"></a>
+<FONT color="green">137</FONT>         * optimized for Ashkenazi or Sephardic Jewish family names.<a name="line.137"></a>
+<FONT color="green">138</FONT>         *<a name="line.138"></a>
+<FONT color="green">139</FONT>         * @param nameType<a name="line.139"></a>
+<FONT color="green">140</FONT>         *            the NameType in use<a name="line.140"></a>
+<FONT color="green">141</FONT>         */<a name="line.141"></a>
+<FONT color="green">142</FONT>        public void setNameType(final NameType nameType) {<a name="line.142"></a>
+<FONT color="green">143</FONT>            this.engine = new PhoneticEngine(nameType,<a name="line.143"></a>
+<FONT color="green">144</FONT>                                             this.engine.getRuleType(),<a name="line.144"></a>
+<FONT color="green">145</FONT>                                             this.engine.isConcat(),<a name="line.145"></a>
+<FONT color="green">146</FONT>                                             this.engine.getMaxPhonemes());<a name="line.146"></a>
+<FONT color="green">147</FONT>        }<a name="line.147"></a>
+<FONT color="green">148</FONT>    <a name="line.148"></a>
+<FONT color="green">149</FONT>        /**<a name="line.149"></a>
+<FONT color="green">150</FONT>         * Sets the rule type to apply. This will widen or narrow the range of phonetic encodings considered.<a name="line.150"></a>
+<FONT color="green">151</FONT>         *<a name="line.151"></a>
+<FONT color="green">152</FONT>         * @param ruleType<a name="line.152"></a>
+<FONT color="green">153</FONT>         *            {@link RuleType#APPROX} or {@link RuleType#EXACT} for approximate or exact phonetic matches<a name="line.153"></a>
+<FONT color="green">154</FONT>         */<a name="line.154"></a>
+<FONT color="green">155</FONT>        public void setRuleType(final RuleType ruleType) {<a name="line.155"></a>
+<FONT color="green">156</FONT>            this.engine = new PhoneticEngine(this.engine.getNameType(),<a name="line.156"></a>
+<FONT color="green">157</FONT>                                             ruleType,<a name="line.157"></a>
+<FONT color="green">158</FONT>                                             this.engine.isConcat(),<a name="line.158"></a>
+<FONT color="green">159</FONT>                                             this.engine.getMaxPhonemes());<a name="line.159"></a>
+<FONT color="green">160</FONT>        }<a name="line.160"></a>
+<FONT color="green">161</FONT>    <a name="line.161"></a>
+<FONT color="green">162</FONT>        /**<a name="line.162"></a>
+<FONT color="green">163</FONT>         * Sets the number of maximum of phonemes that shall be considered by the engine.<a name="line.163"></a>
+<FONT color="green">164</FONT>         *<a name="line.164"></a>
+<FONT color="green">165</FONT>         * @param maxPhonemes<a name="line.165"></a>
+<FONT color="green">166</FONT>         *            the maximum number of phonemes returned by the engine<a name="line.166"></a>
+<FONT color="green">167</FONT>         * @since 1.7<a name="line.167"></a>
+<FONT color="green">168</FONT>         */<a name="line.168"></a>
+<FONT color="green">169</FONT>        public void setMaxPhonemes(final int maxPhonemes) {<a name="line.169"></a>
+<FONT color="green">170</FONT>            this.engine = new PhoneticEngine(this.engine.getNameType(),<a name="line.170"></a>
+<FONT color="green">171</FONT>                                             this.engine.getRuleType(),<a name="line.171"></a>
+<FONT color="green">172</FONT>                                             this.engine.isConcat(),<a name="line.172"></a>
+<FONT color="green">173</FONT>                                             maxPhonemes);<a name="line.173"></a>
+<FONT color="green">174</FONT>        }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>    }<a name="line.176"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

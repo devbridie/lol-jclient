@@ -1,0 +1,595 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.codec.digest;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.security.MessageDigest;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.security.NoSuchAlgorithmException;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Arrays;<a name="line.21"></a>
+<FONT color="green">022</FONT>    import java.util.regex.Matcher;<a name="line.22"></a>
+<FONT color="green">023</FONT>    import java.util.regex.Pattern;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    import org.apache.commons.codec.Charsets;<a name="line.25"></a>
+<FONT color="green">026</FONT>    <a name="line.26"></a>
+<FONT color="green">027</FONT>    /**<a name="line.27"></a>
+<FONT color="green">028</FONT>     * SHA2-based Unix crypt implementation.<a name="line.28"></a>
+<FONT color="green">029</FONT>     * &lt;p&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>     * Based on the C implementation released into the Public Domain by Ulrich Drepper &amp;lt;drepper@redhat.com&amp;gt;<a name="line.30"></a>
+<FONT color="green">031</FONT>     * http://www.akkadia.org/drepper/SHA-crypt.txt<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;p&gt;<a name="line.32"></a>
+<FONT color="green">033</FONT>     * Conversion to Kotlin and from there to Java in 2012 by Christian Hammers &amp;lt;ch@lathspell.de&amp;gt; and likewise put<a name="line.33"></a>
+<FONT color="green">034</FONT>     * into the Public Domain.<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;p&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     * This class is immutable and thread-safe.<a name="line.36"></a>
+<FONT color="green">037</FONT>     *<a name="line.37"></a>
+<FONT color="green">038</FONT>     * @version $Id: Sha2Crypt.java 1435550 2013-01-19 14:09:52Z tn $<a name="line.38"></a>
+<FONT color="green">039</FONT>     * @since 1.7<a name="line.39"></a>
+<FONT color="green">040</FONT>     */<a name="line.40"></a>
+<FONT color="green">041</FONT>    public class Sha2Crypt {<a name="line.41"></a>
+<FONT color="green">042</FONT>    <a name="line.42"></a>
+<FONT color="green">043</FONT>        /** Default number of rounds if not explicitly specified. */<a name="line.43"></a>
+<FONT color="green">044</FONT>        private static final int ROUNDS_DEFAULT = 5000;<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>        /** Maximum number of rounds. */<a name="line.46"></a>
+<FONT color="green">047</FONT>        private static final int ROUNDS_MAX = 999999999;<a name="line.47"></a>
+<FONT color="green">048</FONT>    <a name="line.48"></a>
+<FONT color="green">049</FONT>        /** Minimum number of rounds. */<a name="line.49"></a>
+<FONT color="green">050</FONT>        private static final int ROUNDS_MIN = 1000;<a name="line.50"></a>
+<FONT color="green">051</FONT>    <a name="line.51"></a>
+<FONT color="green">052</FONT>        /** Prefix for optional rounds specification. */<a name="line.52"></a>
+<FONT color="green">053</FONT>        private static final String ROUNDS_PREFIX = "rounds=";<a name="line.53"></a>
+<FONT color="green">054</FONT>    <a name="line.54"></a>
+<FONT color="green">055</FONT>        /** The number of bytes the final hash value will have (SHA-256 variant). */<a name="line.55"></a>
+<FONT color="green">056</FONT>        private static final int SHA256_BLOCKSIZE = 32;<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        /** The prefixes that can be used to identify this crypt() variant (SHA-256). */<a name="line.58"></a>
+<FONT color="green">059</FONT>        static final String SHA256_PREFIX = "$5$";<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        /** The number of bytes the final hash value will have (SHA-512 variant). */<a name="line.61"></a>
+<FONT color="green">062</FONT>        private static final int SHA512_BLOCKSIZE = 64;<a name="line.62"></a>
+<FONT color="green">063</FONT>    <a name="line.63"></a>
+<FONT color="green">064</FONT>        /** The prefixes that can be used to identify this crypt() variant (SHA-512). */<a name="line.64"></a>
+<FONT color="green">065</FONT>        static final String SHA512_PREFIX = "$6$";<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>        /** The pattern to match valid salt values. */<a name="line.67"></a>
+<FONT color="green">068</FONT>        private static final Pattern SALT_PATTERN = Pattern<a name="line.68"></a>
+<FONT color="green">069</FONT>                .compile("^\\$([56])\\$(rounds=(\\d+)\\$)?([\\.\\/a-zA-Z0-9]{1,16}).*");<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>        /**<a name="line.71"></a>
+<FONT color="green">072</FONT>         * Generates a libc crypt() compatible "$5$" hash value with random salt.<a name="line.72"></a>
+<FONT color="green">073</FONT>         * &lt;p&gt;<a name="line.73"></a>
+<FONT color="green">074</FONT>         * See {@link Crypt#crypt(String, String)} for details.<a name="line.74"></a>
+<FONT color="green">075</FONT>         *<a name="line.75"></a>
+<FONT color="green">076</FONT>         * @throws RuntimeException<a name="line.76"></a>
+<FONT color="green">077</FONT>         *             when a {@link java.security.NoSuchAlgorithmException} is caught.<a name="line.77"></a>
+<FONT color="green">078</FONT>         */<a name="line.78"></a>
+<FONT color="green">079</FONT>        public static String sha256Crypt(final byte[] keyBytes) {<a name="line.79"></a>
+<FONT color="green">080</FONT>            return sha256Crypt(keyBytes, null);<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        /**<a name="line.83"></a>
+<FONT color="green">084</FONT>         * Generates a libc6 crypt() compatible "$5$" hash value.<a name="line.84"></a>
+<FONT color="green">085</FONT>         * &lt;p&gt;<a name="line.85"></a>
+<FONT color="green">086</FONT>         * See {@link Crypt#crypt(String, String)} for details.<a name="line.86"></a>
+<FONT color="green">087</FONT>         *<a name="line.87"></a>
+<FONT color="green">088</FONT>         * @throws IllegalArgumentException<a name="line.88"></a>
+<FONT color="green">089</FONT>         *             if the salt does not match the allowed pattern<a name="line.89"></a>
+<FONT color="green">090</FONT>         * @throws RuntimeException<a name="line.90"></a>
+<FONT color="green">091</FONT>         *             when a {@link java.security.NoSuchAlgorithmException} is caught.<a name="line.91"></a>
+<FONT color="green">092</FONT>         */<a name="line.92"></a>
+<FONT color="green">093</FONT>        public static String sha256Crypt(final byte[] keyBytes, String salt) {<a name="line.93"></a>
+<FONT color="green">094</FONT>            if (salt == null) {<a name="line.94"></a>
+<FONT color="green">095</FONT>                salt = SHA256_PREFIX + B64.getRandomSalt(8);<a name="line.95"></a>
+<FONT color="green">096</FONT>            }<a name="line.96"></a>
+<FONT color="green">097</FONT>            return sha2Crypt(keyBytes, salt, SHA256_PREFIX, SHA256_BLOCKSIZE, MessageDigestAlgorithms.SHA_256);<a name="line.97"></a>
+<FONT color="green">098</FONT>        }<a name="line.98"></a>
+<FONT color="green">099</FONT>    <a name="line.99"></a>
+<FONT color="green">100</FONT>        /**<a name="line.100"></a>
+<FONT color="green">101</FONT>         * Generates a libc6 crypt() compatible "$5$" or "$6$" SHA2 based hash value.<a name="line.101"></a>
+<FONT color="green">102</FONT>         * &lt;p&gt;<a name="line.102"></a>
+<FONT color="green">103</FONT>         * This is a nearly line by line conversion of the original C function. The numbered comments are from the<a name="line.103"></a>
+<FONT color="green">104</FONT>         * algorithm description, the short C-style ones from the original C code and the ones with "Remark" from me.<a name="line.104"></a>
+<FONT color="green">105</FONT>         * &lt;p&gt;<a name="line.105"></a>
+<FONT color="green">106</FONT>         * See {@link Crypt#crypt(String, String)} for details.<a name="line.106"></a>
+<FONT color="green">107</FONT>         *<a name="line.107"></a>
+<FONT color="green">108</FONT>         * @param keyBytes<a name="line.108"></a>
+<FONT color="green">109</FONT>         *            plaintext that should be hashed<a name="line.109"></a>
+<FONT color="green">110</FONT>         * @param salt<a name="line.110"></a>
+<FONT color="green">111</FONT>         *            real salt value without prefix or "rounds="<a name="line.111"></a>
+<FONT color="green">112</FONT>         * @param saltPrefix<a name="line.112"></a>
+<FONT color="green">113</FONT>         *            either $5$ or $6$<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @param blocksize<a name="line.114"></a>
+<FONT color="green">115</FONT>         *            a value that differs between $5$ and $6$<a name="line.115"></a>
+<FONT color="green">116</FONT>         * @param algorithm<a name="line.116"></a>
+<FONT color="green">117</FONT>         *            {@link MessageDigest} algorithm identifier string<a name="line.117"></a>
+<FONT color="green">118</FONT>         * @return complete hash value including prefix and salt<a name="line.118"></a>
+<FONT color="green">119</FONT>         * @throws IllegalArgumentException<a name="line.119"></a>
+<FONT color="green">120</FONT>         *             if the given salt is {@code null} or does not match the allowed pattern<a name="line.120"></a>
+<FONT color="green">121</FONT>         * @throws IllegalArgumentException<a name="line.121"></a>
+<FONT color="green">122</FONT>         *             when a {@link NoSuchAlgorithmException} is caught<a name="line.122"></a>
+<FONT color="green">123</FONT>         * @see MessageDigestAlgorithms<a name="line.123"></a>
+<FONT color="green">124</FONT>         */<a name="line.124"></a>
+<FONT color="green">125</FONT>        private static String sha2Crypt(final byte[] keyBytes, final String salt, final String saltPrefix,<a name="line.125"></a>
+<FONT color="green">126</FONT>                                        final int blocksize, final String algorithm) {<a name="line.126"></a>
+<FONT color="green">127</FONT>    <a name="line.127"></a>
+<FONT color="green">128</FONT>            final int keyLen = keyBytes.length;<a name="line.128"></a>
+<FONT color="green">129</FONT>    <a name="line.129"></a>
+<FONT color="green">130</FONT>            // Extracts effective salt and the number of rounds from the given salt.<a name="line.130"></a>
+<FONT color="green">131</FONT>            int rounds = ROUNDS_DEFAULT;<a name="line.131"></a>
+<FONT color="green">132</FONT>            boolean roundsCustom = false;<a name="line.132"></a>
+<FONT color="green">133</FONT>            if (salt == null) {<a name="line.133"></a>
+<FONT color="green">134</FONT>                throw new IllegalArgumentException("Salt must not be null");<a name="line.134"></a>
+<FONT color="green">135</FONT>            }<a name="line.135"></a>
+<FONT color="green">136</FONT>    <a name="line.136"></a>
+<FONT color="green">137</FONT>            final Matcher m = SALT_PATTERN.matcher(salt);<a name="line.137"></a>
+<FONT color="green">138</FONT>            if (m == null || !m.find()) {<a name="line.138"></a>
+<FONT color="green">139</FONT>                throw new IllegalArgumentException("Invalid salt value: " + salt);<a name="line.139"></a>
+<FONT color="green">140</FONT>            }<a name="line.140"></a>
+<FONT color="green">141</FONT>            if (m.group(3) != null) {<a name="line.141"></a>
+<FONT color="green">142</FONT>                rounds = Integer.parseInt(m.group(3));<a name="line.142"></a>
+<FONT color="green">143</FONT>                rounds = Math.max(ROUNDS_MIN, Math.min(ROUNDS_MAX, rounds));<a name="line.143"></a>
+<FONT color="green">144</FONT>                roundsCustom = true;<a name="line.144"></a>
+<FONT color="green">145</FONT>            }<a name="line.145"></a>
+<FONT color="green">146</FONT>            final String saltString = m.group(4);<a name="line.146"></a>
+<FONT color="green">147</FONT>            final byte[] saltBytes = saltString.getBytes(Charsets.UTF_8);<a name="line.147"></a>
+<FONT color="green">148</FONT>            final int saltLen = saltBytes.length;<a name="line.148"></a>
+<FONT color="green">149</FONT>    <a name="line.149"></a>
+<FONT color="green">150</FONT>            // 1. start digest A<a name="line.150"></a>
+<FONT color="green">151</FONT>            // Prepare for the real work.<a name="line.151"></a>
+<FONT color="green">152</FONT>            MessageDigest ctx = DigestUtils.getDigest(algorithm);<a name="line.152"></a>
+<FONT color="green">153</FONT>    <a name="line.153"></a>
+<FONT color="green">154</FONT>            // 2. the password string is added to digest A<a name="line.154"></a>
+<FONT color="green">155</FONT>            /*<a name="line.155"></a>
+<FONT color="green">156</FONT>             * Add the key string.<a name="line.156"></a>
+<FONT color="green">157</FONT>             */<a name="line.157"></a>
+<FONT color="green">158</FONT>            ctx.update(keyBytes);<a name="line.158"></a>
+<FONT color="green">159</FONT>    <a name="line.159"></a>
+<FONT color="green">160</FONT>            // 3. the salt string is added to digest A. This is just the salt string<a name="line.160"></a>
+<FONT color="green">161</FONT>            // itself without the enclosing '$', without the magic salt_prefix $5$ and<a name="line.161"></a>
+<FONT color="green">162</FONT>            // $6$ respectively and without the rounds=&lt;N&gt; specification.<a name="line.162"></a>
+<FONT color="green">163</FONT>            //<a name="line.163"></a>
+<FONT color="green">164</FONT>            // NB: the MD5 algorithm did add the $1$ salt_prefix. This is not deemed<a name="line.164"></a>
+<FONT color="green">165</FONT>            // necessary since it is a constant string and does not add security<a name="line.165"></a>
+<FONT color="green">166</FONT>            // and /possibly/ allows a plain text attack. Since the rounds=&lt;N&gt;<a name="line.166"></a>
+<FONT color="green">167</FONT>            // specification should never be added this would also create an<a name="line.167"></a>
+<FONT color="green">168</FONT>            // inconsistency.<a name="line.168"></a>
+<FONT color="green">169</FONT>            /*<a name="line.169"></a>
+<FONT color="green">170</FONT>             * The last part is the salt string. This must be at most 16 characters and it ends at the first `$' character<a name="line.170"></a>
+<FONT color="green">171</FONT>             * (for compatibility with existing implementations).<a name="line.171"></a>
+<FONT color="green">172</FONT>             */<a name="line.172"></a>
+<FONT color="green">173</FONT>            ctx.update(saltBytes);<a name="line.173"></a>
+<FONT color="green">174</FONT>    <a name="line.174"></a>
+<FONT color="green">175</FONT>            // 4. start digest B<a name="line.175"></a>
+<FONT color="green">176</FONT>            /*<a name="line.176"></a>
+<FONT color="green">177</FONT>             * Compute alternate sha512 sum with input KEY, SALT, and KEY. The final result will be added to the first<a name="line.177"></a>
+<FONT color="green">178</FONT>             * context.<a name="line.178"></a>
+<FONT color="green">179</FONT>             */<a name="line.179"></a>
+<FONT color="green">180</FONT>            MessageDigest altCtx = DigestUtils.getDigest(algorithm);<a name="line.180"></a>
+<FONT color="green">181</FONT>    <a name="line.181"></a>
+<FONT color="green">182</FONT>            // 5. add the password to digest B<a name="line.182"></a>
+<FONT color="green">183</FONT>            /*<a name="line.183"></a>
+<FONT color="green">184</FONT>             * Add key.<a name="line.184"></a>
+<FONT color="green">185</FONT>             */<a name="line.185"></a>
+<FONT color="green">186</FONT>            altCtx.update(keyBytes);<a name="line.186"></a>
+<FONT color="green">187</FONT>    <a name="line.187"></a>
+<FONT color="green">188</FONT>            // 6. add the salt string to digest B<a name="line.188"></a>
+<FONT color="green">189</FONT>            /*<a name="line.189"></a>
+<FONT color="green">190</FONT>             * Add salt.<a name="line.190"></a>
+<FONT color="green">191</FONT>             */<a name="line.191"></a>
+<FONT color="green">192</FONT>            altCtx.update(saltBytes);<a name="line.192"></a>
+<FONT color="green">193</FONT>    <a name="line.193"></a>
+<FONT color="green">194</FONT>            // 7. add the password again to digest B<a name="line.194"></a>
+<FONT color="green">195</FONT>            /*<a name="line.195"></a>
+<FONT color="green">196</FONT>             * Add key again.<a name="line.196"></a>
+<FONT color="green">197</FONT>             */<a name="line.197"></a>
+<FONT color="green">198</FONT>            altCtx.update(keyBytes);<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            // 8. finish digest B<a name="line.200"></a>
+<FONT color="green">201</FONT>            /*<a name="line.201"></a>
+<FONT color="green">202</FONT>             * Now get result of this (32 bytes) and add it to the other context.<a name="line.202"></a>
+<FONT color="green">203</FONT>             */<a name="line.203"></a>
+<FONT color="green">204</FONT>            byte[] altResult = altCtx.digest();<a name="line.204"></a>
+<FONT color="green">205</FONT>    <a name="line.205"></a>
+<FONT color="green">206</FONT>            // 9. For each block of 32 or 64 bytes in the password string (excluding<a name="line.206"></a>
+<FONT color="green">207</FONT>            // the terminating NUL in the C representation), add digest B to digest A<a name="line.207"></a>
+<FONT color="green">208</FONT>            /*<a name="line.208"></a>
+<FONT color="green">209</FONT>             * Add for any character in the key one byte of the alternate sum.<a name="line.209"></a>
+<FONT color="green">210</FONT>             */<a name="line.210"></a>
+<FONT color="green">211</FONT>            /*<a name="line.211"></a>
+<FONT color="green">212</FONT>             * (Remark: the C code comment seems wrong for key length &gt; 32!)<a name="line.212"></a>
+<FONT color="green">213</FONT>             */<a name="line.213"></a>
+<FONT color="green">214</FONT>            int cnt = keyBytes.length;<a name="line.214"></a>
+<FONT color="green">215</FONT>            while (cnt &gt; blocksize) {<a name="line.215"></a>
+<FONT color="green">216</FONT>                ctx.update(altResult, 0, blocksize);<a name="line.216"></a>
+<FONT color="green">217</FONT>                cnt -= blocksize;<a name="line.217"></a>
+<FONT color="green">218</FONT>            }<a name="line.218"></a>
+<FONT color="green">219</FONT>    <a name="line.219"></a>
+<FONT color="green">220</FONT>            // 10. For the remaining N bytes of the password string add the first<a name="line.220"></a>
+<FONT color="green">221</FONT>            // N bytes of digest B to digest A<a name="line.221"></a>
+<FONT color="green">222</FONT>            ctx.update(altResult, 0, cnt);<a name="line.222"></a>
+<FONT color="green">223</FONT>    <a name="line.223"></a>
+<FONT color="green">224</FONT>            // 11. For each bit of the binary representation of the length of the<a name="line.224"></a>
+<FONT color="green">225</FONT>            // password string up to and including the highest 1-digit, starting<a name="line.225"></a>
+<FONT color="green">226</FONT>            // from to lowest bit position (numeric value 1):<a name="line.226"></a>
+<FONT color="green">227</FONT>            //<a name="line.227"></a>
+<FONT color="green">228</FONT>            // a) for a 1-digit add digest B to digest A<a name="line.228"></a>
+<FONT color="green">229</FONT>            //<a name="line.229"></a>
+<FONT color="green">230</FONT>            // b) for a 0-digit add the password string<a name="line.230"></a>
+<FONT color="green">231</FONT>            //<a name="line.231"></a>
+<FONT color="green">232</FONT>            // NB: this step differs significantly from the MD5 algorithm. It<a name="line.232"></a>
+<FONT color="green">233</FONT>            // adds more randomness.<a name="line.233"></a>
+<FONT color="green">234</FONT>            /*<a name="line.234"></a>
+<FONT color="green">235</FONT>             * Take the binary representation of the length of the key and for every 1 add the alternate sum, for every 0<a name="line.235"></a>
+<FONT color="green">236</FONT>             * the key.<a name="line.236"></a>
+<FONT color="green">237</FONT>             */<a name="line.237"></a>
+<FONT color="green">238</FONT>            cnt = keyBytes.length;<a name="line.238"></a>
+<FONT color="green">239</FONT>            while (cnt &gt; 0) {<a name="line.239"></a>
+<FONT color="green">240</FONT>                if ((cnt &amp; 1) != 0) {<a name="line.240"></a>
+<FONT color="green">241</FONT>                    ctx.update(altResult, 0, blocksize);<a name="line.241"></a>
+<FONT color="green">242</FONT>                } else {<a name="line.242"></a>
+<FONT color="green">243</FONT>                    ctx.update(keyBytes);<a name="line.243"></a>
+<FONT color="green">244</FONT>                }<a name="line.244"></a>
+<FONT color="green">245</FONT>                cnt &gt;&gt;= 1;<a name="line.245"></a>
+<FONT color="green">246</FONT>            }<a name="line.246"></a>
+<FONT color="green">247</FONT>    <a name="line.247"></a>
+<FONT color="green">248</FONT>            // 12. finish digest A<a name="line.248"></a>
+<FONT color="green">249</FONT>            /*<a name="line.249"></a>
+<FONT color="green">250</FONT>             * Create intermediate result.<a name="line.250"></a>
+<FONT color="green">251</FONT>             */<a name="line.251"></a>
+<FONT color="green">252</FONT>            altResult = ctx.digest();<a name="line.252"></a>
+<FONT color="green">253</FONT>    <a name="line.253"></a>
+<FONT color="green">254</FONT>            // 13. start digest DP<a name="line.254"></a>
+<FONT color="green">255</FONT>            /*<a name="line.255"></a>
+<FONT color="green">256</FONT>             * Start computation of P byte sequence.<a name="line.256"></a>
+<FONT color="green">257</FONT>             */<a name="line.257"></a>
+<FONT color="green">258</FONT>            altCtx = DigestUtils.getDigest(algorithm);<a name="line.258"></a>
+<FONT color="green">259</FONT>    <a name="line.259"></a>
+<FONT color="green">260</FONT>            // 14. for every byte in the password (excluding the terminating NUL byte<a name="line.260"></a>
+<FONT color="green">261</FONT>            // in the C representation of the string)<a name="line.261"></a>
+<FONT color="green">262</FONT>            //<a name="line.262"></a>
+<FONT color="green">263</FONT>            // add the password to digest DP<a name="line.263"></a>
+<FONT color="green">264</FONT>            /*<a name="line.264"></a>
+<FONT color="green">265</FONT>             * For every character in the password add the entire password.<a name="line.265"></a>
+<FONT color="green">266</FONT>             */<a name="line.266"></a>
+<FONT color="green">267</FONT>            for (int i = 1; i &lt;= keyLen; i++) {<a name="line.267"></a>
+<FONT color="green">268</FONT>                altCtx.update(keyBytes);<a name="line.268"></a>
+<FONT color="green">269</FONT>            }<a name="line.269"></a>
+<FONT color="green">270</FONT>    <a name="line.270"></a>
+<FONT color="green">271</FONT>            // 15. finish digest DP<a name="line.271"></a>
+<FONT color="green">272</FONT>            /*<a name="line.272"></a>
+<FONT color="green">273</FONT>             * Finish the digest.<a name="line.273"></a>
+<FONT color="green">274</FONT>             */<a name="line.274"></a>
+<FONT color="green">275</FONT>            byte[] tempResult = altCtx.digest();<a name="line.275"></a>
+<FONT color="green">276</FONT>    <a name="line.276"></a>
+<FONT color="green">277</FONT>            // 16. produce byte sequence P of the same length as the password where<a name="line.277"></a>
+<FONT color="green">278</FONT>            //<a name="line.278"></a>
+<FONT color="green">279</FONT>            // a) for each block of 32 or 64 bytes of length of the password string<a name="line.279"></a>
+<FONT color="green">280</FONT>            // the entire digest DP is used<a name="line.280"></a>
+<FONT color="green">281</FONT>            //<a name="line.281"></a>
+<FONT color="green">282</FONT>            // b) for the remaining N (up to 31 or 63) bytes use the first N<a name="line.282"></a>
+<FONT color="green">283</FONT>            // bytes of digest DP<a name="line.283"></a>
+<FONT color="green">284</FONT>            /*<a name="line.284"></a>
+<FONT color="green">285</FONT>             * Create byte sequence P.<a name="line.285"></a>
+<FONT color="green">286</FONT>             */<a name="line.286"></a>
+<FONT color="green">287</FONT>            final byte[] pBytes = new byte[keyLen];<a name="line.287"></a>
+<FONT color="green">288</FONT>            int cp = 0;<a name="line.288"></a>
+<FONT color="green">289</FONT>            while (cp &lt; keyLen - blocksize) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                System.arraycopy(tempResult, 0, pBytes, cp, blocksize);<a name="line.290"></a>
+<FONT color="green">291</FONT>                cp += blocksize;<a name="line.291"></a>
+<FONT color="green">292</FONT>            }<a name="line.292"></a>
+<FONT color="green">293</FONT>            System.arraycopy(tempResult, 0, pBytes, cp, keyLen - cp);<a name="line.293"></a>
+<FONT color="green">294</FONT>    <a name="line.294"></a>
+<FONT color="green">295</FONT>            // 17. start digest DS<a name="line.295"></a>
+<FONT color="green">296</FONT>            /*<a name="line.296"></a>
+<FONT color="green">297</FONT>             * Start computation of S byte sequence.<a name="line.297"></a>
+<FONT color="green">298</FONT>             */<a name="line.298"></a>
+<FONT color="green">299</FONT>            altCtx = DigestUtils.getDigest(algorithm);<a name="line.299"></a>
+<FONT color="green">300</FONT>    <a name="line.300"></a>
+<FONT color="green">301</FONT>            // 18. repeast the following 16+A[0] times, where A[0] represents the first<a name="line.301"></a>
+<FONT color="green">302</FONT>            // byte in digest A interpreted as an 8-bit unsigned value<a name="line.302"></a>
+<FONT color="green">303</FONT>            //<a name="line.303"></a>
+<FONT color="green">304</FONT>            // add the salt to digest DS<a name="line.304"></a>
+<FONT color="green">305</FONT>            /*<a name="line.305"></a>
+<FONT color="green">306</FONT>             * For every character in the password add the entire password.<a name="line.306"></a>
+<FONT color="green">307</FONT>             */<a name="line.307"></a>
+<FONT color="green">308</FONT>            for (int i = 1; i &lt;= 16 + (altResult[0] &amp; 0xff); i++) {<a name="line.308"></a>
+<FONT color="green">309</FONT>                altCtx.update(saltBytes);<a name="line.309"></a>
+<FONT color="green">310</FONT>            }<a name="line.310"></a>
+<FONT color="green">311</FONT>    <a name="line.311"></a>
+<FONT color="green">312</FONT>            // 19. finish digest DS<a name="line.312"></a>
+<FONT color="green">313</FONT>            /*<a name="line.313"></a>
+<FONT color="green">314</FONT>             * Finish the digest.<a name="line.314"></a>
+<FONT color="green">315</FONT>             */<a name="line.315"></a>
+<FONT color="green">316</FONT>            tempResult = altCtx.digest();<a name="line.316"></a>
+<FONT color="green">317</FONT>    <a name="line.317"></a>
+<FONT color="green">318</FONT>            // 20. produce byte sequence S of the same length as the salt string where<a name="line.318"></a>
+<FONT color="green">319</FONT>            //<a name="line.319"></a>
+<FONT color="green">320</FONT>            // a) for each block of 32 or 64 bytes of length of the salt string<a name="line.320"></a>
+<FONT color="green">321</FONT>            // the entire digest DS is used<a name="line.321"></a>
+<FONT color="green">322</FONT>            //<a name="line.322"></a>
+<FONT color="green">323</FONT>            // b) for the remaining N (up to 31 or 63) bytes use the first N<a name="line.323"></a>
+<FONT color="green">324</FONT>            // bytes of digest DS<a name="line.324"></a>
+<FONT color="green">325</FONT>            /*<a name="line.325"></a>
+<FONT color="green">326</FONT>             * Create byte sequence S.<a name="line.326"></a>
+<FONT color="green">327</FONT>             */<a name="line.327"></a>
+<FONT color="green">328</FONT>            // Remark: The salt is limited to 16 chars, how does this make sense?<a name="line.328"></a>
+<FONT color="green">329</FONT>            final byte[] sBytes = new byte[saltLen];<a name="line.329"></a>
+<FONT color="green">330</FONT>            cp = 0;<a name="line.330"></a>
+<FONT color="green">331</FONT>            while (cp &lt; saltLen - blocksize) {<a name="line.331"></a>
+<FONT color="green">332</FONT>                System.arraycopy(tempResult, 0, sBytes, cp, blocksize);<a name="line.332"></a>
+<FONT color="green">333</FONT>                cp += blocksize;<a name="line.333"></a>
+<FONT color="green">334</FONT>            }<a name="line.334"></a>
+<FONT color="green">335</FONT>            System.arraycopy(tempResult, 0, sBytes, cp, saltLen - cp);<a name="line.335"></a>
+<FONT color="green">336</FONT>    <a name="line.336"></a>
+<FONT color="green">337</FONT>            // 21. repeat a loop according to the number specified in the rounds=&lt;N&gt;<a name="line.337"></a>
+<FONT color="green">338</FONT>            // specification in the salt (or the default value if none is<a name="line.338"></a>
+<FONT color="green">339</FONT>            // present). Each round is numbered, starting with 0 and up to N-1.<a name="line.339"></a>
+<FONT color="green">340</FONT>            //<a name="line.340"></a>
+<FONT color="green">341</FONT>            // The loop uses a digest as input. In the first round it is the<a name="line.341"></a>
+<FONT color="green">342</FONT>            // digest produced in step 12. In the latter steps it is the digest<a name="line.342"></a>
+<FONT color="green">343</FONT>            // produced in step 21.h. The following text uses the notation<a name="line.343"></a>
+<FONT color="green">344</FONT>            // "digest A/C" to describe this behavior.<a name="line.344"></a>
+<FONT color="green">345</FONT>            /*<a name="line.345"></a>
+<FONT color="green">346</FONT>             * Repeatedly run the collected hash value through sha512 to burn CPU cycles.<a name="line.346"></a>
+<FONT color="green">347</FONT>             */<a name="line.347"></a>
+<FONT color="green">348</FONT>            for (int i = 0; i &lt;= rounds - 1; i++) {<a name="line.348"></a>
+<FONT color="green">349</FONT>                // a) start digest C<a name="line.349"></a>
+<FONT color="green">350</FONT>                /*<a name="line.350"></a>
+<FONT color="green">351</FONT>                 * New context.<a name="line.351"></a>
+<FONT color="green">352</FONT>                 */<a name="line.352"></a>
+<FONT color="green">353</FONT>                ctx = DigestUtils.getDigest(algorithm);<a name="line.353"></a>
+<FONT color="green">354</FONT>    <a name="line.354"></a>
+<FONT color="green">355</FONT>                // b) for odd round numbers add the byte sequense P to digest C<a name="line.355"></a>
+<FONT color="green">356</FONT>                // c) for even round numbers add digest A/C<a name="line.356"></a>
+<FONT color="green">357</FONT>                /*<a name="line.357"></a>
+<FONT color="green">358</FONT>                 * Add key or last result.<a name="line.358"></a>
+<FONT color="green">359</FONT>                 */<a name="line.359"></a>
+<FONT color="green">360</FONT>                if ((i &amp; 1) != 0) {<a name="line.360"></a>
+<FONT color="green">361</FONT>                    ctx.update(pBytes, 0, keyLen);<a name="line.361"></a>
+<FONT color="green">362</FONT>                } else {<a name="line.362"></a>
+<FONT color="green">363</FONT>                    ctx.update(altResult, 0, blocksize);<a name="line.363"></a>
+<FONT color="green">364</FONT>                }<a name="line.364"></a>
+<FONT color="green">365</FONT>    <a name="line.365"></a>
+<FONT color="green">366</FONT>                // d) for all round numbers not divisible by 3 add the byte sequence S<a name="line.366"></a>
+<FONT color="green">367</FONT>                /*<a name="line.367"></a>
+<FONT color="green">368</FONT>                 * Add salt for numbers not divisible by 3.<a name="line.368"></a>
+<FONT color="green">369</FONT>                 */<a name="line.369"></a>
+<FONT color="green">370</FONT>                if (i % 3 != 0) {<a name="line.370"></a>
+<FONT color="green">371</FONT>                    ctx.update(sBytes, 0, saltLen);<a name="line.371"></a>
+<FONT color="green">372</FONT>                }<a name="line.372"></a>
+<FONT color="green">373</FONT>    <a name="line.373"></a>
+<FONT color="green">374</FONT>                // e) for all round numbers not divisible by 7 add the byte sequence P<a name="line.374"></a>
+<FONT color="green">375</FONT>                /*<a name="line.375"></a>
+<FONT color="green">376</FONT>                 * Add key for numbers not divisible by 7.<a name="line.376"></a>
+<FONT color="green">377</FONT>                 */<a name="line.377"></a>
+<FONT color="green">378</FONT>                if (i % 7 != 0) {<a name="line.378"></a>
+<FONT color="green">379</FONT>                    ctx.update(pBytes, 0, keyLen);<a name="line.379"></a>
+<FONT color="green">380</FONT>                }<a name="line.380"></a>
+<FONT color="green">381</FONT>    <a name="line.381"></a>
+<FONT color="green">382</FONT>                // f) for odd round numbers add digest A/C<a name="line.382"></a>
+<FONT color="green">383</FONT>                // g) for even round numbers add the byte sequence P<a name="line.383"></a>
+<FONT color="green">384</FONT>                /*<a name="line.384"></a>
+<FONT color="green">385</FONT>                 * Add key or last result.<a name="line.385"></a>
+<FONT color="green">386</FONT>                 */<a name="line.386"></a>
+<FONT color="green">387</FONT>                if ((i &amp; 1) != 0) {<a name="line.387"></a>
+<FONT color="green">388</FONT>                    ctx.update(altResult, 0, blocksize);<a name="line.388"></a>
+<FONT color="green">389</FONT>                } else {<a name="line.389"></a>
+<FONT color="green">390</FONT>                    ctx.update(pBytes, 0, keyLen);<a name="line.390"></a>
+<FONT color="green">391</FONT>                }<a name="line.391"></a>
+<FONT color="green">392</FONT>    <a name="line.392"></a>
+<FONT color="green">393</FONT>                // h) finish digest C.<a name="line.393"></a>
+<FONT color="green">394</FONT>                /*<a name="line.394"></a>
+<FONT color="green">395</FONT>                 * Create intermediate result.<a name="line.395"></a>
+<FONT color="green">396</FONT>                 */<a name="line.396"></a>
+<FONT color="green">397</FONT>                altResult = ctx.digest();<a name="line.397"></a>
+<FONT color="green">398</FONT>            }<a name="line.398"></a>
+<FONT color="green">399</FONT>    <a name="line.399"></a>
+<FONT color="green">400</FONT>            // 22. Produce the output string. This is an ASCII string of the maximum<a name="line.400"></a>
+<FONT color="green">401</FONT>            // size specified above, consisting of multiple pieces:<a name="line.401"></a>
+<FONT color="green">402</FONT>            //<a name="line.402"></a>
+<FONT color="green">403</FONT>            // a) the salt salt_prefix, $5$ or $6$ respectively<a name="line.403"></a>
+<FONT color="green">404</FONT>            //<a name="line.404"></a>
+<FONT color="green">405</FONT>            // b) the rounds=&lt;N&gt; specification, if one was present in the input<a name="line.405"></a>
+<FONT color="green">406</FONT>            // salt string. A trailing '$' is added in this case to separate<a name="line.406"></a>
+<FONT color="green">407</FONT>            // the rounds specification from the following text.<a name="line.407"></a>
+<FONT color="green">408</FONT>            //<a name="line.408"></a>
+<FONT color="green">409</FONT>            // c) the salt string truncated to 16 characters<a name="line.409"></a>
+<FONT color="green">410</FONT>            //<a name="line.410"></a>
+<FONT color="green">411</FONT>            // d) a '$' character<a name="line.411"></a>
+<FONT color="green">412</FONT>            /*<a name="line.412"></a>
+<FONT color="green">413</FONT>             * Now we can construct the result string. It consists of three parts.<a name="line.413"></a>
+<FONT color="green">414</FONT>             */<a name="line.414"></a>
+<FONT color="green">415</FONT>            final StringBuilder buffer = new StringBuilder(saltPrefix);<a name="line.415"></a>
+<FONT color="green">416</FONT>            if (roundsCustom) {<a name="line.416"></a>
+<FONT color="green">417</FONT>                buffer.append(ROUNDS_PREFIX);<a name="line.417"></a>
+<FONT color="green">418</FONT>                buffer.append(rounds);<a name="line.418"></a>
+<FONT color="green">419</FONT>                buffer.append("$");<a name="line.419"></a>
+<FONT color="green">420</FONT>            }<a name="line.420"></a>
+<FONT color="green">421</FONT>            buffer.append(saltString);<a name="line.421"></a>
+<FONT color="green">422</FONT>            buffer.append("$");<a name="line.422"></a>
+<FONT color="green">423</FONT>    <a name="line.423"></a>
+<FONT color="green">424</FONT>            // e) the base-64 encoded final C digest. The encoding used is as<a name="line.424"></a>
+<FONT color="green">425</FONT>            // follows:<a name="line.425"></a>
+<FONT color="green">426</FONT>            // [...]<a name="line.426"></a>
+<FONT color="green">427</FONT>            //<a name="line.427"></a>
+<FONT color="green">428</FONT>            // Each group of three bytes from the digest produces four<a name="line.428"></a>
+<FONT color="green">429</FONT>            // characters as output:<a name="line.429"></a>
+<FONT color="green">430</FONT>            //<a name="line.430"></a>
+<FONT color="green">431</FONT>            // 1. character: the six low bits of the first byte<a name="line.431"></a>
+<FONT color="green">432</FONT>            // 2. character: the two high bits of the first byte and the<a name="line.432"></a>
+<FONT color="green">433</FONT>            // four low bytes from the second byte<a name="line.433"></a>
+<FONT color="green">434</FONT>            // 3. character: the four high bytes from the second byte and<a name="line.434"></a>
+<FONT color="green">435</FONT>            // the two low bits from the third byte<a name="line.435"></a>
+<FONT color="green">436</FONT>            // 4. character: the six high bits from the third byte<a name="line.436"></a>
+<FONT color="green">437</FONT>            //<a name="line.437"></a>
+<FONT color="green">438</FONT>            // The groups of three bytes are as follows (in this sequence).<a name="line.438"></a>
+<FONT color="green">439</FONT>            // These are the indices into the byte array containing the<a name="line.439"></a>
+<FONT color="green">440</FONT>            // digest, starting with index 0. For the last group there are<a name="line.440"></a>
+<FONT color="green">441</FONT>            // not enough bytes left in the digest and the value zero is used<a name="line.441"></a>
+<FONT color="green">442</FONT>            // in its place. This group also produces only three or two<a name="line.442"></a>
+<FONT color="green">443</FONT>            // characters as output for SHA-512 and SHA-512 respectively.<a name="line.443"></a>
+<FONT color="green">444</FONT>    <a name="line.444"></a>
+<FONT color="green">445</FONT>            // This was just a safeguard in the C implementation:<a name="line.445"></a>
+<FONT color="green">446</FONT>            // int buflen = salt_prefix.length() - 1 + ROUNDS_PREFIX.length() + 9 + 1 + salt_string.length() + 1 + 86 + 1;<a name="line.446"></a>
+<FONT color="green">447</FONT>    <a name="line.447"></a>
+<FONT color="green">448</FONT>            if (blocksize == 32) {<a name="line.448"></a>
+<FONT color="green">449</FONT>                B64.b64from24bit(altResult[0], altResult[10], altResult[20], 4, buffer);<a name="line.449"></a>
+<FONT color="green">450</FONT>                B64.b64from24bit(altResult[21], altResult[1], altResult[11], 4, buffer);<a name="line.450"></a>
+<FONT color="green">451</FONT>                B64.b64from24bit(altResult[12], altResult[22], altResult[2], 4, buffer);<a name="line.451"></a>
+<FONT color="green">452</FONT>                B64.b64from24bit(altResult[3], altResult[13], altResult[23], 4, buffer);<a name="line.452"></a>
+<FONT color="green">453</FONT>                B64.b64from24bit(altResult[24], altResult[4], altResult[14], 4, buffer);<a name="line.453"></a>
+<FONT color="green">454</FONT>                B64.b64from24bit(altResult[15], altResult[25], altResult[5], 4, buffer);<a name="line.454"></a>
+<FONT color="green">455</FONT>                B64.b64from24bit(altResult[6], altResult[16], altResult[26], 4, buffer);<a name="line.455"></a>
+<FONT color="green">456</FONT>                B64.b64from24bit(altResult[27], altResult[7], altResult[17], 4, buffer);<a name="line.456"></a>
+<FONT color="green">457</FONT>                B64.b64from24bit(altResult[18], altResult[28], altResult[8], 4, buffer);<a name="line.457"></a>
+<FONT color="green">458</FONT>                B64.b64from24bit(altResult[9], altResult[19], altResult[29], 4, buffer);<a name="line.458"></a>
+<FONT color="green">459</FONT>                B64.b64from24bit((byte) 0, altResult[31], altResult[30], 3, buffer);<a name="line.459"></a>
+<FONT color="green">460</FONT>            } else {<a name="line.460"></a>
+<FONT color="green">461</FONT>                B64.b64from24bit(altResult[0], altResult[21], altResult[42], 4, buffer);<a name="line.461"></a>
+<FONT color="green">462</FONT>                B64.b64from24bit(altResult[22], altResult[43], altResult[1], 4, buffer);<a name="line.462"></a>
+<FONT color="green">463</FONT>                B64.b64from24bit(altResult[44], altResult[2], altResult[23], 4, buffer);<a name="line.463"></a>
+<FONT color="green">464</FONT>                B64.b64from24bit(altResult[3], altResult[24], altResult[45], 4, buffer);<a name="line.464"></a>
+<FONT color="green">465</FONT>                B64.b64from24bit(altResult[25], altResult[46], altResult[4], 4, buffer);<a name="line.465"></a>
+<FONT color="green">466</FONT>                B64.b64from24bit(altResult[47], altResult[5], altResult[26], 4, buffer);<a name="line.466"></a>
+<FONT color="green">467</FONT>                B64.b64from24bit(altResult[6], altResult[27], altResult[48], 4, buffer);<a name="line.467"></a>
+<FONT color="green">468</FONT>                B64.b64from24bit(altResult[28], altResult[49], altResult[7], 4, buffer);<a name="line.468"></a>
+<FONT color="green">469</FONT>                B64.b64from24bit(altResult[50], altResult[8], altResult[29], 4, buffer);<a name="line.469"></a>
+<FONT color="green">470</FONT>                B64.b64from24bit(altResult[9], altResult[30], altResult[51], 4, buffer);<a name="line.470"></a>
+<FONT color="green">471</FONT>                B64.b64from24bit(altResult[31], altResult[52], altResult[10], 4, buffer);<a name="line.471"></a>
+<FONT color="green">472</FONT>                B64.b64from24bit(altResult[53], altResult[11], altResult[32], 4, buffer);<a name="line.472"></a>
+<FONT color="green">473</FONT>                B64.b64from24bit(altResult[12], altResult[33], altResult[54], 4, buffer);<a name="line.473"></a>
+<FONT color="green">474</FONT>                B64.b64from24bit(altResult[34], altResult[55], altResult[13], 4, buffer);<a name="line.474"></a>
+<FONT color="green">475</FONT>                B64.b64from24bit(altResult[56], altResult[14], altResult[35], 4, buffer);<a name="line.475"></a>
+<FONT color="green">476</FONT>                B64.b64from24bit(altResult[15], altResult[36], altResult[57], 4, buffer);<a name="line.476"></a>
+<FONT color="green">477</FONT>                B64.b64from24bit(altResult[37], altResult[58], altResult[16], 4, buffer);<a name="line.477"></a>
+<FONT color="green">478</FONT>                B64.b64from24bit(altResult[59], altResult[17], altResult[38], 4, buffer);<a name="line.478"></a>
+<FONT color="green">479</FONT>                B64.b64from24bit(altResult[18], altResult[39], altResult[60], 4, buffer);<a name="line.479"></a>
+<FONT color="green">480</FONT>                B64.b64from24bit(altResult[40], altResult[61], altResult[19], 4, buffer);<a name="line.480"></a>
+<FONT color="green">481</FONT>                B64.b64from24bit(altResult[62], altResult[20], altResult[41], 4, buffer);<a name="line.481"></a>
+<FONT color="green">482</FONT>                B64.b64from24bit((byte) 0, (byte) 0, altResult[63], 2, buffer);<a name="line.482"></a>
+<FONT color="green">483</FONT>            }<a name="line.483"></a>
+<FONT color="green">484</FONT>    <a name="line.484"></a>
+<FONT color="green">485</FONT>            /*<a name="line.485"></a>
+<FONT color="green">486</FONT>             * Clear the buffer for the intermediate result so that people attaching to processes or reading core dumps<a name="line.486"></a>
+<FONT color="green">487</FONT>             * cannot get any information.<a name="line.487"></a>
+<FONT color="green">488</FONT>             */<a name="line.488"></a>
+<FONT color="green">489</FONT>            // Is there a better way to do this with the JVM?<a name="line.489"></a>
+<FONT color="green">490</FONT>            Arrays.fill(tempResult, (byte) 0);<a name="line.490"></a>
+<FONT color="green">491</FONT>            Arrays.fill(pBytes, (byte) 0);<a name="line.491"></a>
+<FONT color="green">492</FONT>            Arrays.fill(sBytes, (byte) 0);<a name="line.492"></a>
+<FONT color="green">493</FONT>            ctx.reset();<a name="line.493"></a>
+<FONT color="green">494</FONT>            altCtx.reset();<a name="line.494"></a>
+<FONT color="green">495</FONT>            Arrays.fill(keyBytes, (byte) 0);<a name="line.495"></a>
+<FONT color="green">496</FONT>            Arrays.fill(saltBytes, (byte) 0);<a name="line.496"></a>
+<FONT color="green">497</FONT>    <a name="line.497"></a>
+<FONT color="green">498</FONT>            return buffer.toString();<a name="line.498"></a>
+<FONT color="green">499</FONT>        }<a name="line.499"></a>
+<FONT color="green">500</FONT>    <a name="line.500"></a>
+<FONT color="green">501</FONT>        /**<a name="line.501"></a>
+<FONT color="green">502</FONT>         * Generates a libc crypt() compatible "$6$" hash value with random salt.<a name="line.502"></a>
+<FONT color="green">503</FONT>         * &lt;p&gt;<a name="line.503"></a>
+<FONT color="green">504</FONT>         * See {@link Crypt#crypt(String, String)} for details.<a name="line.504"></a>
+<FONT color="green">505</FONT>         *<a name="line.505"></a>
+<FONT color="green">506</FONT>         * @throws RuntimeException<a name="line.506"></a>
+<FONT color="green">507</FONT>         *             when a {@link java.security.NoSuchAlgorithmException} is caught.<a name="line.507"></a>
+<FONT color="green">508</FONT>         */<a name="line.508"></a>
+<FONT color="green">509</FONT>        public static String sha512Crypt(final byte[] keyBytes) {<a name="line.509"></a>
+<FONT color="green">510</FONT>            return sha512Crypt(keyBytes, null);<a name="line.510"></a>
+<FONT color="green">511</FONT>        }<a name="line.511"></a>
+<FONT color="green">512</FONT>    <a name="line.512"></a>
+<FONT color="green">513</FONT>        /**<a name="line.513"></a>
+<FONT color="green">514</FONT>         * Generates a libc6 crypt() compatible "$6$" hash value.<a name="line.514"></a>
+<FONT color="green">515</FONT>         * &lt;p&gt;<a name="line.515"></a>
+<FONT color="green">516</FONT>         * See {@link Crypt#crypt(String, String)} for details.<a name="line.516"></a>
+<FONT color="green">517</FONT>         *<a name="line.517"></a>
+<FONT color="green">518</FONT>         * @throws IllegalArgumentException<a name="line.518"></a>
+<FONT color="green">519</FONT>         *             if the salt does not match the allowed pattern<a name="line.519"></a>
+<FONT color="green">520</FONT>         * @throws RuntimeException<a name="line.520"></a>
+<FONT color="green">521</FONT>         *             when a {@link java.security.NoSuchAlgorithmException} is caught.<a name="line.521"></a>
+<FONT color="green">522</FONT>         */<a name="line.522"></a>
+<FONT color="green">523</FONT>        public static String sha512Crypt(final byte[] keyBytes, String salt) {<a name="line.523"></a>
+<FONT color="green">524</FONT>            if (salt == null) {<a name="line.524"></a>
+<FONT color="green">525</FONT>                salt = SHA512_PREFIX + B64.getRandomSalt(8);<a name="line.525"></a>
+<FONT color="green">526</FONT>            }<a name="line.526"></a>
+<FONT color="green">527</FONT>            return sha2Crypt(keyBytes, salt, SHA512_PREFIX, SHA512_BLOCKSIZE, MessageDigestAlgorithms.SHA_512);<a name="line.527"></a>
+<FONT color="green">528</FONT>        }<a name="line.528"></a>
+<FONT color="green">529</FONT>    }<a name="line.529"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>
