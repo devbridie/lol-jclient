@@ -1,0 +1,210 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     *<a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.codec;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.nio.charset.Charset;<a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    /**<a name="line.21"></a>
+<FONT color="green">022</FONT>     * Charsets required of every implementation of the Java platform.<a name="line.22"></a>
+<FONT color="green">023</FONT>     *<a name="line.23"></a>
+<FONT color="green">024</FONT>     * From the Java documentation &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard<a name="line.24"></a>
+<FONT color="green">025</FONT>     * charsets&lt;/a&gt;:<a name="line.25"></a>
+<FONT color="green">026</FONT>     * &lt;p&gt;<a name="line.26"></a>
+<FONT color="green">027</FONT>     * &lt;cite&gt;Every implementation of the Java platform is required to support the following character encodings. Consult the<a name="line.27"></a>
+<FONT color="green">028</FONT>     * release documentation for your implementation to see if any other encodings are supported. Consult the release<a name="line.28"></a>
+<FONT color="green">029</FONT>     * documentation for your implementation to see if any other encodings are supported. &lt;/cite&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>     * &lt;/p&gt;<a name="line.30"></a>
+<FONT color="green">031</FONT>     *<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;ul&gt;<a name="line.32"></a>
+<FONT color="green">033</FONT>     * &lt;li&gt;&lt;code&gt;US-ASCII&lt;/code&gt;&lt;br/&gt;<a name="line.33"></a>
+<FONT color="green">034</FONT>     * Seven-bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic Latin block of the Unicode character set.&lt;/li&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;li&gt;&lt;code&gt;ISO-8859-1&lt;/code&gt;&lt;br/&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     * ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.&lt;/li&gt;<a name="line.36"></a>
+<FONT color="green">037</FONT>     * &lt;li&gt;&lt;code&gt;UTF-8&lt;/code&gt;&lt;br/&gt;<a name="line.37"></a>
+<FONT color="green">038</FONT>     * Eight-bit Unicode Transformation Format.&lt;/li&gt;<a name="line.38"></a>
+<FONT color="green">039</FONT>     * &lt;li&gt;&lt;code&gt;UTF-16BE&lt;/code&gt;&lt;br/&gt;<a name="line.39"></a>
+<FONT color="green">040</FONT>     * Sixteen-bit Unicode Transformation Format, big-endian byte order.&lt;/li&gt;<a name="line.40"></a>
+<FONT color="green">041</FONT>     * &lt;li&gt;&lt;code&gt;UTF-16LE&lt;/code&gt;&lt;br/&gt;<a name="line.41"></a>
+<FONT color="green">042</FONT>     * Sixteen-bit Unicode Transformation Format, little-endian byte order.&lt;/li&gt;<a name="line.42"></a>
+<FONT color="green">043</FONT>     * &lt;li&gt;&lt;code&gt;UTF-16&lt;/code&gt;&lt;br/&gt;<a name="line.43"></a>
+<FONT color="green">044</FONT>     * Sixteen-bit Unicode Transformation Format, byte order specified by a mandatory initial byte-order mark (either order<a name="line.44"></a>
+<FONT color="green">045</FONT>     * accepted on input, big-endian used on output.)&lt;/li&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>     * &lt;/ul&gt;<a name="line.46"></a>
+<FONT color="green">047</FONT>     *<a name="line.47"></a>
+<FONT color="green">048</FONT>     * This perhaps would best belong in the Commons Lang project. Even if a similar class is defined in Commons Lang, it is<a name="line.48"></a>
+<FONT color="green">049</FONT>     * not foreseen that Commons Codec would be made to depend on Commons Lang.<a name="line.49"></a>
+<FONT color="green">050</FONT>     *<a name="line.50"></a>
+<FONT color="green">051</FONT>     * &lt;p&gt;<a name="line.51"></a>
+<FONT color="green">052</FONT>     * This class is immutable and thread-safe.<a name="line.52"></a>
+<FONT color="green">053</FONT>     * &lt;/p&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>     *<a name="line.54"></a>
+<FONT color="green">055</FONT>     * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.55"></a>
+<FONT color="green">056</FONT>     * @since 1.7<a name="line.56"></a>
+<FONT color="green">057</FONT>     * @version $Id: CharEncoding.java 1173287 2011-09-20 18:16:19Z ggregory $<a name="line.57"></a>
+<FONT color="green">058</FONT>     */<a name="line.58"></a>
+<FONT color="green">059</FONT>    public class Charsets {<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>        //<a name="line.61"></a>
+<FONT color="green">062</FONT>        // This class should only contain Charset instances for required encodings. This guarantees that it will load<a name="line.62"></a>
+<FONT color="green">063</FONT>        // correctly and without delay on all Java platforms.<a name="line.63"></a>
+<FONT color="green">064</FONT>        //<a name="line.64"></a>
+<FONT color="green">065</FONT>    <a name="line.65"></a>
+<FONT color="green">066</FONT>        /**<a name="line.66"></a>
+<FONT color="green">067</FONT>         * Returns the given Charset or the default Charset if the given Charset is null.<a name="line.67"></a>
+<FONT color="green">068</FONT>         *<a name="line.68"></a>
+<FONT color="green">069</FONT>         * @param charset<a name="line.69"></a>
+<FONT color="green">070</FONT>         *            A charset or null.<a name="line.70"></a>
+<FONT color="green">071</FONT>         * @return the given Charset or the default Charset if the given Charset is null<a name="line.71"></a>
+<FONT color="green">072</FONT>         */<a name="line.72"></a>
+<FONT color="green">073</FONT>        public static Charset toCharset(final Charset charset) {<a name="line.73"></a>
+<FONT color="green">074</FONT>            return charset == null ? Charset.defaultCharset() : charset;<a name="line.74"></a>
+<FONT color="green">075</FONT>        }<a name="line.75"></a>
+<FONT color="green">076</FONT>    <a name="line.76"></a>
+<FONT color="green">077</FONT>        /**<a name="line.77"></a>
+<FONT color="green">078</FONT>         * Returns a Charset for the named charset. If the name is null, return the default Charset.<a name="line.78"></a>
+<FONT color="green">079</FONT>         *<a name="line.79"></a>
+<FONT color="green">080</FONT>         * @param charset<a name="line.80"></a>
+<FONT color="green">081</FONT>         *            The name of the requested charset, may be null.<a name="line.81"></a>
+<FONT color="green">082</FONT>         * @return a Charset for the named charset<a name="line.82"></a>
+<FONT color="green">083</FONT>         * @throws java.nio.charset.UnsupportedCharsetException<a name="line.83"></a>
+<FONT color="green">084</FONT>         *             If the named charset is unavailable<a name="line.84"></a>
+<FONT color="green">085</FONT>         */<a name="line.85"></a>
+<FONT color="green">086</FONT>        public static Charset toCharset(final String charset) {<a name="line.86"></a>
+<FONT color="green">087</FONT>            return charset == null ? Charset.defaultCharset() : Charset.forName(charset);<a name="line.87"></a>
+<FONT color="green">088</FONT>        }<a name="line.88"></a>
+<FONT color="green">089</FONT>    <a name="line.89"></a>
+<FONT color="green">090</FONT>        /**<a name="line.90"></a>
+<FONT color="green">091</FONT>         * CharEncodingISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1.<a name="line.91"></a>
+<FONT color="green">092</FONT>         * &lt;p&gt;<a name="line.92"></a>
+<FONT color="green">093</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.93"></a>
+<FONT color="green">094</FONT>         *<a name="line.94"></a>
+<FONT color="green">095</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.95"></a>
+<FONT color="green">096</FONT>         */<a name="line.96"></a>
+<FONT color="green">097</FONT>        public static final Charset ISO_8859_1 = Charset.forName(CharEncoding.ISO_8859_1);<a name="line.97"></a>
+<FONT color="green">098</FONT>    <a name="line.98"></a>
+<FONT color="green">099</FONT>        /**<a name="line.99"></a>
+<FONT color="green">100</FONT>         * Seven-bit ASCII, also known as ISO646-US, also known as the Basic Latin block of the Unicode character set.<a name="line.100"></a>
+<FONT color="green">101</FONT>         * &lt;p&gt;<a name="line.101"></a>
+<FONT color="green">102</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.102"></a>
+<FONT color="green">103</FONT>         *<a name="line.103"></a>
+<FONT color="green">104</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.104"></a>
+<FONT color="green">105</FONT>         */<a name="line.105"></a>
+<FONT color="green">106</FONT>        public static final Charset US_ASCII = Charset.forName(CharEncoding.US_ASCII);<a name="line.106"></a>
+<FONT color="green">107</FONT>    <a name="line.107"></a>
+<FONT color="green">108</FONT>        /**<a name="line.108"></a>
+<FONT color="green">109</FONT>         * Sixteen-bit Unicode Transformation Format, The byte order specified by a mandatory initial byte-order mark<a name="line.109"></a>
+<FONT color="green">110</FONT>         * (either order accepted on input, big-endian used on output)<a name="line.110"></a>
+<FONT color="green">111</FONT>         * &lt;p&gt;<a name="line.111"></a>
+<FONT color="green">112</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.112"></a>
+<FONT color="green">113</FONT>         *<a name="line.113"></a>
+<FONT color="green">114</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.114"></a>
+<FONT color="green">115</FONT>         */<a name="line.115"></a>
+<FONT color="green">116</FONT>        public static final Charset UTF_16 = Charset.forName(CharEncoding.UTF_16);<a name="line.116"></a>
+<FONT color="green">117</FONT>    <a name="line.117"></a>
+<FONT color="green">118</FONT>        /**<a name="line.118"></a>
+<FONT color="green">119</FONT>         * Sixteen-bit Unicode Transformation Format, big-endian byte order.<a name="line.119"></a>
+<FONT color="green">120</FONT>         * &lt;p&gt;<a name="line.120"></a>
+<FONT color="green">121</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.121"></a>
+<FONT color="green">122</FONT>         *<a name="line.122"></a>
+<FONT color="green">123</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.123"></a>
+<FONT color="green">124</FONT>         */<a name="line.124"></a>
+<FONT color="green">125</FONT>        public static final Charset UTF_16BE = Charset.forName(CharEncoding.UTF_16BE);<a name="line.125"></a>
+<FONT color="green">126</FONT>    <a name="line.126"></a>
+<FONT color="green">127</FONT>        /**<a name="line.127"></a>
+<FONT color="green">128</FONT>         * Sixteen-bit Unicode Transformation Format, little-endian byte order.<a name="line.128"></a>
+<FONT color="green">129</FONT>         * &lt;p&gt;<a name="line.129"></a>
+<FONT color="green">130</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.130"></a>
+<FONT color="green">131</FONT>         *<a name="line.131"></a>
+<FONT color="green">132</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.132"></a>
+<FONT color="green">133</FONT>         */<a name="line.133"></a>
+<FONT color="green">134</FONT>        public static final Charset UTF_16LE = Charset.forName(CharEncoding.UTF_16LE);<a name="line.134"></a>
+<FONT color="green">135</FONT>    <a name="line.135"></a>
+<FONT color="green">136</FONT>        /**<a name="line.136"></a>
+<FONT color="green">137</FONT>         * Eight-bit Unicode Transformation Format.<a name="line.137"></a>
+<FONT color="green">138</FONT>         * &lt;p&gt;<a name="line.138"></a>
+<FONT color="green">139</FONT>         * Every implementation of the Java platform is required to support this character encoding.<a name="line.139"></a>
+<FONT color="green">140</FONT>         *<a name="line.140"></a>
+<FONT color="green">141</FONT>         * @see &lt;a href="http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html"&gt;Standard charsets&lt;/a&gt;<a name="line.141"></a>
+<FONT color="green">142</FONT>         */<a name="line.142"></a>
+<FONT color="green">143</FONT>        public static final Charset UTF_8 = Charset.forName(CharEncoding.UTF_8);<a name="line.143"></a>
+<FONT color="green">144</FONT>    }<a name="line.144"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

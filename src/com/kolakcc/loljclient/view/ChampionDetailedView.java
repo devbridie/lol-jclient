@@ -131,6 +131,7 @@ public class ChampionDetailedView extends KolaView {
 	}
 
 	public void setChampion(Champion champion) {
+		// might have to case on OS - System.getProperty("os.name")
 		String absPath = System.getProperty("user.dir");
 		absPath = absPath.replace('\\', '/');
 		absPath = "file:" + absPath;
