@@ -131,6 +131,9 @@ public class ChampionDetailedView extends KolaView {
 	}
 
 	public void setChampion(Champion champion) {
+		String absPath = System.getProperty("user.dir");
+		absPath = absPath.replace('\\', '/');
+		absPath = "file:" + absPath;
 		this.setTitle(String.format("%s, %s", champion.getDisplayName(), champion.getTitle()));
 		championName.setText(champion.getDisplayName());
 		championTitle.setText(champion.getTitle());
@@ -144,32 +147,44 @@ public class ChampionDetailedView extends KolaView {
 		tipsPlayingAgainstTips.setText("<html>" + champion.getOpponentTips().replace("*", "<li>"));
 		statsPanel.setText(
 				"<html>"
-				+ "Health:"
-				+ "<br> " + champion.getHealthBase() + "(+" + champion.getHealthLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Health Regen:"
-				+ "<br> " + champion.getHealthRegenBase() + "(+" + champion.getHealthLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Mana:"
-				+ "<br> " + champion.getManaBase() + "(+" + champion.getManaLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Mana Regen:"
-				+ "<br> " + champion.getManaRegenBase() + "(+" + champion.getManaLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Attack Damage:"
-				+ "<br> " + champion.getAttackBase() + "(+" + champion.getAttackLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Armor:"
-				+ "<br> " + champion.getArmorBase() + "(+" + champion.getArmorLevel() + " per level)"
-				+ "<br>"
-//				+ "<br>Attack Speed:"
-//				+ "<br> " + champion.get + "(+" + champion.getHealthLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Magic Resist:"
-				+ "<br> " + champion.getMagicResistBase() + "(+" + champion.getMagicResistLevel() + " per level)"
-				+ "<br>"
-				+ "<br>Movement Speed:"
-				+ "<br> " + champion.getMovementSpeed()
+				+ "<table>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/health.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Health:</strong> <br />" + champion.getHealthBase() + "(+" + champion.getHealthLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/health-regen.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Health Regen:</strong> <br />" + champion.getHealthRegenBase() + "(+" + champion.getHealthLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/mana.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Mana:</strong> <br />" + champion.getManaBase() + "(+" + champion.getManaLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/mana-regen.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Mana Regen:</strong> <br />" + champion.getManaRegenBase() + "(+" + champion.getManaLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/attack-damage.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Attack Damage:</strong> <br />" + champion.getAttackBase() + "(+" + champion.getAttackLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/armor.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Armor:</strong> <br />" + champion.getArmorBase() + "(+" + champion.getArmorLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				/*+ "<tr>" //can't get from model
+				+ "<td> <img src='" + absPath + "/img/statsIcons/attack-speed.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Attack speed:</strong> <br />" + champion.getAttackSpeed() + "</td>"
+				+ "</tr>"*/
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/magic-resist.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Magic Resist:</strong> <br />" + champion.getMagicResistBase() + "(+" + champion.getMagicResistLevel() + " per level)" + "</td>"
+				+ "</tr>"
+				+ "<tr>"
+				+ "<td> <img src='" + absPath + "/img/statsIcons/movement-speed.png' width='50' height='50' /> </td>"
+				+ "<td> <strong>Movement speed:</strong> <br />" + champion.getMovementSpeed() + "</td>"
+				+ "</tr>"
+				+ "</table>"
 				+ "</html>"
 				);
 		for (ChampionSkin skin : champion.getSkins()) {
