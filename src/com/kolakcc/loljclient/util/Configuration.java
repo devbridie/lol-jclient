@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class Configuration {
-	public static String PVPVersion = "3.13.XX";
+	public static String PVPVersion = "3.14.XX";
 	private static Properties config = null;
 	private static File configFile = null;
 	
@@ -71,6 +71,7 @@ public class Configuration {
 	public static void setLeagueDirectory(File dir) {
 		set("leaguedir", dir.getAbsolutePath());
 	}
+	
 	public static void setDefaultLAF(String LAF) {
 		set("laf",LAF);
 	}
